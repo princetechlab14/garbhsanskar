@@ -1,0 +1,17 @@
+const express = require("express");
+const router = express.Router();
+const apiController = require("../controller/apiController");
+
+router.post("/insert_details_of_women", apiController.insertDetailsOfWomen);
+router.post("/pregnancy_week_details", apiController.pregnancyWeekDetails);
+router.post("/get_exercise_data", apiController.getExercisesByTrimester);
+router.post("/get_article_data", apiController.getArticlesByCategory);
+router.post("/get_music_data", apiController.getMusicByCategories);
+router.post("/week_diet", apiController.weekDiet);
+router.post("/about_pre_cat", apiController.aboutPreCat);
+router.post("/about_pre_details_by_cat", apiController.aboutPreDetailsByCat);
+router.post("/get_vedic_data", apiController.getVedicData);
+router.post("/views_count", apiController.viewsCount);
+router.post("/diet_month", apiController.dietMonth);
+router.post("/get_diet_recipe", apiController.getDietRecipe);
+module.exports = router;

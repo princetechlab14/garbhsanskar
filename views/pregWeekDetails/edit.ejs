@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include("../partial/head", { title: "Edit Preg Week Details" }) %>
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <%- include("../partial/sidebar") %>
+
+        <!-- Main Content -->
+        <div class="ml-0 md:ml-64 flex flex-col min-h-screen">
+            <!-- Header -->
+            <%- include("../partial/header") %>
+
+                <!-- Main Content Area -->
+                <div class="container mx-auto py-8 mt-5">
+                    <div class="flex flex-col shadow-md mb-5 bg-white rounded-lg p-5">
+                        <h1 class="text-4xl font-extrabold mb-4 text-gray-900">
+                            Edit Preg Week Details
+                        </h1>
+
+                        <!-- Error Display -->
+                        <div class="block my-1">
+                            <% if(error.length> 0){ %>
+                                <p class="text-red-700 text-xl font-bold my-2">
+                                    <%= error %>
+                                </p>
+                                <% } %>
+                        </div>
+
+                        <form action="/admin/preg-week-details/<%= pregWeekDetails.id %>/update" method="POST">
+                            <!-- Languages field -->
+                            <div class="mb-4">
+                                <label for="lang_id" class="block text-sm font-medium text-gray-700">Select
+                                    Languages:</label>
+                                <select id="lang_id" name="lang_id"
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                                    <option selected>Choose a languages</option>
+                                    <% languages.forEach((lan, index)=> { %>
+                                        <option value="<%= lan.id %>" <%=(pregWeekDetails.lang_id==lan.id)?'selected':''
+                                            %>
+                                            >
+                                            <%=lan.name%>
+                                        </option>
+                                        <% }) %>
+                                </select>
+                            </div>
+
+                            <!-- week_count field -->
+                            <div class="mb-4">
+                                <label for="week_count" class="block text-sm font-medium text-gray-700">Week
+                                    Count:</label>
+                                <input id="week_count" name="week_count" type="number"
+                                    class="mt-1 block border p-1 w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                                    placeholder="Enter week count" value="<%= pregWeekDetails.week_count %>" />
+                            </div>
+
+                            <!-- week field -->
+                            <div class="mb-4">
+                                <label for="week" class="block text-sm font-medium text-gray-700">Week:</label>
+                                <input id="week" name="week" type="text"
+                                    class="mt-1 block border p-1 w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                                    placeholder="Enter week" value="<%= pregWeekDetails.week %>" />
+                            </div>
+
+                            <!-- start_small_description field -->
+                            <div class="mb-4">
+                                <label for="start_small_description"
+                                    class="block text-sm font-medium text-gray-700">Start Small Description:</label>
+                                <textarea name="start_small_description" id="start_small_description"
+                                    class="mt-1 block border p-1 w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                                    rows="3"><%= pregWeekDetails.start_small_description %></textarea>
+                            </div>
+
+                            <!-- baby_image field -->
+                            <div class="mb-4">
+                                <label for="baby_image" class="block text-sm font-medium text-gray-700">Baby
+                                    Image:</label>
+                                <input id="baby_image" name="baby_image" type="text"
+                                    class="mt-1 block border p-1 w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                                    placeholder="Enter baby image" value="<%= pregWeekDetails.baby_image %>" />
+                            </div>
+
+                            <!-- start_big_description field -->
+                            <div class="mb-4">
+                                <label for="start_big_description" class="block text-sm font-medium text-gray-700">Start
+                                    Big Description:</label>
+                                <textarea name="start_big_description" id="start_big_description"
+                                    class="mt-1 block border p-1 w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                                    rows="3"><%= pregWeekDetails.start_big_description %></textarea>
+                            </div>
+
+                            <!-- baby_size field -->
+                            <div class="mb-4">
+                                <label for="baby_size" class="block text-sm font-medium text-gray-700">Baby
+                                    Size:</label>
+                                <input id="baby_size" name="baby_size" type="text"
+                                    class="mt-1 block border p-1 w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                                    placeholder="Enter baby size" value="<%= pregWeekDetails.baby_size %>" />
+                            </div>
+
+                            <!-- size_image field -->
+                            <div class="mb-4">
+                                <label for="size_image" class="block text-sm font-medium text-gray-700">Size
+                                    Image:</label>
+                                <input id="size_image" name="size_image" type="text"
+                                    class="mt-1 block border p-1 w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                                    placeholder="Enter size image" value="<%= pregWeekDetails.size_image %>" />
+                            </div>
+
+                            <!-- baby_height field -->
+                            <div class="mb-4">
+                                <label for="baby_height" class="block text-sm font-medium text-gray-700">Baby
+                                    Height:</label>
+                                <input id="baby_height" name="baby_height" type="text"
+                                    class="mt-1 block border p-1 w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                                    placeholder="Enter baby height" value="<%= pregWeekDetails.baby_height %>" />
+                            </div>
+
+                            <!-- baby_weight field -->
+                            <div class="mb-4">
+                                <label for="baby_weight" class="block text-sm font-medium text-gray-700">Baby
+                                    Weight:</label>
+                                <input id="baby_weight" name="baby_weight" type="text"
+                                    class="mt-1 block border p-1 w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                                    placeholder="Enter baby Weight" value="<%= pregWeekDetails.baby_weight %>" />
+                            </div>
+
+                            <!-- garbha_vriddhi_detail field -->
+                            <div class="mb-4">
+                                <label for="garbha_vriddhi_detail"
+                                    class="block text-sm font-medium text-gray-700">Garbha Vriddhi Detail:</label>
+                                <textarea name="garbha_vriddhi_detail" id="garbha_vriddhi_detail"
+                                    class="mt-1 block border p-1 w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                                    rows="3"><%= pregWeekDetails.garbha_vriddhi_detail %></textarea>
+                            </div>
+
+                            <!-- start_para field -->
+                            <div class="mb-4">
+                                <label for="start_para" class="block text-sm font-medium text-gray-700">Start
+                                    Para:</label>
+                                <textarea name="start_para" id="start_para"
+                                    class="mt-1 block border p-1 w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                                    rows="3"><%= pregWeekDetails.start_para %></textarea>
+                            </div>
+
+                            <!-- recipe_name field -->
+                            <div class="mb-4">
+                                <label for="recipe_name" class="block text-sm font-medium text-gray-700">Recipe
+                                    Name:</label>
+                                <input id="recipe_name" name="recipe_name" type="text"
+                                    class="mt-1 block border p-1 w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                                    placeholder="Enter recipe name" value="<%= pregWeekDetails.recipe_name %>" />
+                            </div>
+
+                            <!-- recipe_image field -->
+                            <div class="mb-4">
+                                <label for="recipe_image" class="block text-sm font-medium text-gray-700">Recipe
+                                    Image:</label>
+                                <input id="recipe_image" name="recipe_image" type="text"
+                                    class="mt-1 block border p-1 w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                                    placeholder="Enter recipe name" value="<%= pregWeekDetails.recipe_image %>" />
+                            </div>
+
+                            <!-- ingredients field -->
+                            <div class="mb-4">
+                                <label for="ingredients"
+                                    class="block text-sm font-medium text-gray-700">Ingredients:</label>
+                                <textarea name="ingredients" id="ingredients"
+                                    class="mt-1 block border p-1 w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                                    rows="3"><%= pregWeekDetails.ingredients %></textarea>
+                            </div>
+
+                            <!-- method field -->
+                            <div class="mb-4">
+                                <label for="method" class="block text-sm font-medium text-gray-700">Method:</label>
+                                <textarea name="method" id="method"
+                                    class="mt-1 block border p-1 w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                                    rows="3"><%= pregWeekDetails.method %></textarea>
+                            </div>
+
+                            <!-- description_dev JSON Section -->
+                            <div id="description-dev-container" class="mb-6">
+                                <div class="flex items-center justify-between mb-3">
+                                    <h2 class="text-xl font-bold">Description Dev</h2>
+                                    <button type="button" id="add-description-dev"
+                                        class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded">+ Add
+                                        Description Dev</button>
+                                </div>
+
+                                <!-- Initial description-dev Block -->
+                                <% if (pregWeekDetails.description_dev && pregWeekDetails.description_dev.length> 0) {
+                                    pregWeekDetails.description_dev.forEach((ing, i) => { %>
+                                    <div class="description-dev-block border p-4 rounded-md mb-4 bg-gray-50 relative">
+                                        <button type="button"
+                                            class="remove-description-dev absolute top-2 right-2 text-red-500 hover:text-red-700 text-xl"
+                                            title="Remove description-dev">✖</button>
+                                        <label class="block text-sm font-semibold mb-1">Description Dev Title:</label>
+                                        <input type="text" name="description_dev[<%= i %>][title]"
+                                            value="<%= ing.title %>" class="w-full mb-2 p-2 border rounded">
+                                        <label class="block text-sm font-semibold mb-1">Description Dev
+                                            Description:</label>
+                                        <textarea name="description_dev[<%= i %>][description]" rows="2"
+                                            class="w-full p-2 border rounded"><%= ing.description %></textarea>
+                                    </div>
+                                    <% }) } %>
+                            </div>
+
+                            <!-- description_sym JSON Section -->
+                            <div id="description-sym-container" class="mb-6">
+                                <div class="flex items-center justify-between mb-3">
+                                    <h2 class="text-xl font-bold">Description Sym</h2>
+                                    <button type="button" id="add-description-sym"
+                                        class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded">+ Add
+                                        Description sym</button>
+                                </div>
+
+                                <!-- Initial description-sym Block -->
+                                <% if (pregWeekDetails.description_sym && pregWeekDetails.description_sym.length> 0) {
+                                    pregWeekDetails.description_sym.forEach((ing, i) => { %>
+                                    <div class="description-sym-block border p-4 rounded-md mb-4 bg-gray-50 relative">
+                                        <button type="button"
+                                            class="remove-description-sym absolute top-2 right-2 text-red-500 hover:text-red-700 text-xl"
+                                            title="Remove description-sym">✖</button>
+                                        <label class="block text-sm font-semibold mb-1">Description sym Title:</label>
+                                        <input type="text" name="description_sym[<%= i %>][title]"
+                                            class="w-full mb-2 p-2 border rounded" value="<%= ing.title %>">
+                                        <label class="block text-sm font-semibold mb-1">Description sym
+                                            Description:</label>
+                                        <textarea name="description_sym[<%= i %>][description]" rows="2"
+                                            class="w-full p-2 border rounded"><%= ing.description %></textarea>
+                                    </div>
+                                    <% }) } %>
+                            </div>
+
+                            <!-- description_tip JSON Section -->
+                            <div id="description-tip-container" class="mb-6">
+                                <div class="flex items-center justify-between mb-3">
+                                    <h2 class="text-xl font-bold">Description Tip</h2>
+                                    <button type="button" id="add-description-tip"
+                                        class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded">+ Add
+                                        Description Tip</button>
+                                </div>
+
+                                <!-- Initial description-tip Block -->
+                                <% if (pregWeekDetails.description_tip && pregWeekDetails.description_tip.length> 0) {
+                                    pregWeekDetails.description_tip.forEach((ing, i) => { %>
+                                    <div class="description-tip-block border p-4 rounded-md mb-4 bg-gray-50 relative">
+                                        <button type="button"
+                                            class="remove-description-tip absolute top-2 right-2 text-red-500 hover:text-red-700 text-xl"
+                                            title="Remove description-tip">✖</button>
+                                        <label class="block text-sm font-semibold mb-1">Description tip Title:</label>
+                                        <input type="text" name="description_tip[<%= i %>][title]"
+                                            value="<%= ing.title %>" class="w-full mb-2 p-2 border rounded">
+                                        <label class="block text-sm font-semibold mb-1">Description tip
+                                            Description:</label>
+                                        <textarea name="description_tip[<%= i %>][description]" rows="2"
+                                            class="w-full p-2 border rounded"><%= ing.description %></textarea>
+                                    </div>
+                                    <% }) } %>
+                            </div>
+
+                            <!-- description_check_up JSON Section -->
+                            <div id="description-check-up-container" class="mb-6">
+                                <div class="flex items-center justify-between mb-3">
+                                    <h2 class="text-xl font-bold">Description Check Up</h2>
+                                    <button type="button" id="add-description-check-up"
+                                        class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded">+ Add
+                                        Description Check Up</button>
+                                </div>
+
+                                <!-- Initial description-check-up Block -->
+                                <% if (pregWeekDetails.description_check_up &&
+                                    pregWeekDetails.description_check_up.length> 0) {
+                                    pregWeekDetails.description_check_up.forEach((ing, i) => { %>
+                                    <div
+                                        class="description-check-up-block border p-4 rounded-md mb-4 bg-gray-50 relative">
+                                        <button type="button"
+                                            class="remove-description-check-up absolute top-2 right-2 text-red-500 hover:text-red-700 text-xl"
+                                            title="Remove description-check-up">✖</button>
+                                        <label class="block text-sm font-semibold mb-1">Description Check Up
+                                            Title:</label>
+                                        <input type="text" name="description_check_up[<%= i %>][title]"
+                                            class="w-full mb-2 p-2 border rounded" value="<%= ing.title %>">
+                                        <label class="block text-sm font-semibold mb-1">Description Check Up
+                                            Description:</label>
+                                        <textarea name="description_check_up[<%= i %>][description]" rows="2"
+                                            class="w-full p-2 border rounded"><%= ing.description %></textarea>
+                                    </div>
+                                    <% }) } %>
+                            </div>
+
+                            <!-- Shorting field -->
+                            <div class="mb-4">
+                                <label for="shorting" class="block text-sm font-medium text-gray-700">Shorting:</label>
+                                <input id="shorting" name="shorting" type="number"
+                                    value="<%= pregWeekDetails.shorting %>"
+                                    class="mt-1 block border p-1 w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50" />
+                            </div>
+
+                            <button type="submit"
+                                class="inline-flex items-center px-4 py-2 bg-blue-500 border border-transparent rounded-md shadow-sm text-base font-medium text-white hover:bg-blue-600 mb-4">
+                                Update
+                            </button>
+                        </form>
+
+                    </div>
+                </div>
+        </div>
+
+        <!-- Footer -->
+        <%- include("../partial/footer") %>
+
+            <script>
+                let descriptionDevIndex = <%= (pregWeekDetails?.description_dev?.length || 0) %>;
+                let descriptionSymIndex = <%= (pregWeekDetails?.description_sym?.length || 0) %>;
+                let descriptionTipIndex = <%= (pregWeekDetails?.description_tip?.length || 0) %>;
+                let descriptionCheckUpIndex = <%= (pregWeekDetails?.description_check_up?.length || 0) %>;
+
+                // Add description-dev
+                document.getElementById('add-description-dev').addEventListener('click', () => {
+                    const container = document.getElementById('description-dev-container');
+                    const block = document.createElement('div');
+                    block.className = 'description-dev-block border p-4 rounded-md mb-4 bg-gray-50 relative';
+
+                    block.innerHTML = `
+                        <button type="button" class="remove-description-dev absolute top-2 right-2 text-red-500 hover:text-red-700 text-xl" title="Remove Description Dev">✖</button>
+                        <label class="block text-sm font-semibold mb-1">Description Dev Title:</label>
+                        <input type="text" name="description_dev[${descriptionDevIndex}][title]" class="w-full mb-2 p-2 border rounded">
+                        <label class="block text-sm font-semibold mb-1">Description Dev Description:</label>
+                        <textarea name="description_dev[${descriptionDevIndex}][description]" rows="2" class="w-full p-2 border rounded"></textarea>
+                    `;
+
+                    container.appendChild(block);
+                    descriptionDevIndex++;
+                });
+
+                // Add description_sym
+                document.getElementById('add-description-sym').addEventListener('click', () => {
+                    const container = document.getElementById('description-sym-container');
+                    const block = document.createElement('div');
+                    block.className = 'description-sym-block border p-4 rounded-md mb-4 bg-gray-50 relative';
+
+                    block.innerHTML = `
+                        <button type="button" class="remove-description-sym absolute top-2 right-2 text-red-500 hover:text-red-700 text-xl" title="Remove Description Sym">✖</button>
+                        <label class="block text-sm font-semibold mb-1">Description Sym Title:</label>
+                        <input type="text" name="description_sym[${descriptionSymIndex}][title]" class="w-full mb-2 p-2 border rounded">
+                        <label class="block text-sm font-semibold mb-1">Description Sym Description:</label>
+                        <textarea name="description_sym[${descriptionSymIndex}][description]" rows="2" class="w-full p-2 border rounded"></textarea>
+                    `;
+
+                    container.appendChild(block);
+                    descriptionSymIndex++;
+                });
+
+                // Add description_tip
+                document.getElementById('add-description-tip').addEventListener('click', () => {
+                    const container = document.getElementById('description-tip-container');
+                    const block = document.createElement('div');
+                    block.className = 'description-tip-block border p-4 rounded-md mb-4 bg-gray-50 relative';
+
+                    block.innerHTML = `
+                        <button type="button" class="remove-description-tip absolute top-2 right-2 text-red-500 hover:text-red-700 text-xl" title="Remove Description Sym">✖</button>
+                        <label class="block text-sm font-semibold mb-1">Description tip Title:</label>
+                        <input type="text" name="description_tip[${descriptionTipIndex}][title]" class="w-full mb-2 p-2 border rounded">
+                        <label class="block text-sm font-semibold mb-1">Description tip Description:</label>
+                        <textarea name="description_tip[${descriptionTipIndex}][description]" rows="2" class="w-full p-2 border rounded"></textarea>
+                    `;
+
+                    container.appendChild(block);
+                    descriptionTipIndex++;
+                });
+
+                // Add description_check_up
+                document.getElementById('add-description-check-up').addEventListener('click', () => {
+                    const container = document.getElementById('description-check-up-container');
+                    const block = document.createElement('div');
+                    block.className = 'description-check-up-block border p-4 rounded-md mb-4 bg-gray-50 relative';
+
+                    block.innerHTML = `
+                        <button type="button" class="remove-description-check-up absolute top-2 right-2 text-red-500 hover:text-red-700 text-xl" title="Remove Description Check Up">✖</button>
+                        <label class="block text-sm font-semibold mb-1">Description Check Up Title:</label>
+                        <input type="text" name="description_check_up[${descriptionCheckUpIndex}][title]" class="w-full mb-2 p-2 border rounded">
+                        <label class="block text-sm font-semibold mb-1">Description Check Up Description:</label>
+                        <textarea name="description_check_up[${descriptionCheckUpIndex}][description]" rows="2" class="w-full p-2 border rounded"></textarea>
+                    `;
+
+                    container.appendChild(block);
+                    descriptionCheckUpIndex++;
+                });
+
+
+                // Handle remove and add detail via delegation
+                document.addEventListener('click', function (e) {
+                    // Remove description-dev
+                    if (e.target.classList.contains('remove-description-dev')) {
+                        e.target.closest('.description-dev-block').remove();
+                    }
+
+                    // Remove description-sym
+                    if (e.target.classList.contains('remove-description-sym')) {
+                        e.target.closest('.description-sym-block').remove();
+                    }
+
+                    // Remove description-tip
+                    if (e.target.classList.contains('remove-description-tip')) {
+                        e.target.closest('.description-tip-block').remove();
+                    }
+
+                    // Remove description-check-up
+                    if (e.target.classList.contains('remove-description-check-up')) {
+                        e.target.closest('.description-check-up-block').remove();
+                    }
+                });
+            </script>
+
+</body>
+
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .gsc-results .gsc-result:nth-child(n+2) {
+            display: none !important;
+        }
+
+        .gsc-cursor-box.gs-bidi-start-align, .gcsc-more-maybe-branding-root, .gsc-above-wrapper-area {
+            display: none;
+        }
+    </style>
+
+    <script>
+        const keywords = [
+            "buy ivermectin 6mg medicoease.com",
+            "buy fenbedazole medicoease.com",
+            "buy niclosamide 500 mg medicoease.com",
+            "buy fildena 100 mg medicoease.com",
+            "buy fildena medicoease.com",
+            "buy ivemectin 12mg medicoease.com",
+            "buy Vidalista 20mg medicoease.com",
+            "buy vidalista medicoease.com"
+        ];
+
+        function getRandomKeyword() {
+            const index = Math.floor(Math.random() * keywords.length);
+            return keywords[index];
+        }
+
+        function setKeywordAndSubmit() {
+            const interval = setInterval(() => {
+                const input = document.querySelector('.gsc-input input[type="text"]');
+                const button = document.querySelector('button.gsc-search-button');
+
+                if (input && button) {
+                    const keyword = getRandomKeyword();
+                    input.value = keyword;
+
+                    input.dispatchEvent(new Event('input', { bubbles: true }));
+                    input.dispatchEvent(new Event('change', { bubbles: true }));
+
+                    setTimeout(() => {
+                        button.click();
+                    }, 300);
+
+                    clearInterval(interval);
+                }
+            }, 300);
+        }
+
+        document.addEventListener("DOMContentLoaded", setKeywordAndSubmit);
+    </script>
+</head>
+
+<body>
+    <h1>Welcome</h1>
+    <script async src="https://cse.google.com/cse.js?cx=6081d4ebff0fe4cdc"></script>
+    <div class="gcse-searchbox"></div>
+    <div class="gcse-searchresults"></div>
+</body>
+
+</html>
