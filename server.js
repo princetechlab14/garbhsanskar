@@ -20,7 +20,7 @@ const server = http.createServer(app);
 const allowedOrigins = [
   'http://localhost:3000',
   'http://localhost:3048',
-  'http://localhost:3049',
+  'http://localhost:3078',
   'https://garbhsanskar.web-gamer.com',
 ];
 
