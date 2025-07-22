@@ -1,5 +1,5 @@
 const moment = require("moment");
-const { WomenDetailsModel, PregWeekDetailModel, ExerciseModel, ArticleModel, MusicModel, MusicCategoryModel, PregnancyModel, PregnancyDetailModel, sequelize, VedicGeetModel, DietModel, AvoidFoodModel } = require("../models");
+const { WomenDetailsModel, PregWeekDetailModel, ExerciseModel, ArticleModel, MusicModel, MusicCategoryModel, PregnancyModel, PregnancyDetailModel, sequelize, VedicGeetModel, DietModel, AvoidFoodModel, WorkCategoryModel, CreativeWorkModel } = require("../models");
 const Joi = require("joi");
 const { groupBy } = require("lodash");
 
@@ -397,6 +397,49 @@ const getDietRecipe = async (req, res) => {
     }
 };
 
+const getCreativeWorkCat = async (req, res) => {
+    const schema = Joi.object({
+        lang_id: Joi.number().optional(),
+    });
 
+    const { error, value } = schema.validate(req.body);
+    if (error) return res.status(400).json({ status: false, message: error.details[0].message, data: [] });
+    const { lang_id } = value;
 
-module.exports = { insertDetailsOfWomen, pregnancyWeekDetails, getExercisesByTrimester, getArticlesByCategory, getMusicByCategories, weekDiet, aboutPreCat, aboutPreDetailsByCat, getVedicData, viewsCount, dietMonth, getDietRecipe };
+    try {
+        const creativeWorkCat = await WorkCategoryModel.findAll({ where: lang_id ? { lang_id } : {} });
+        if (creativeWorkCat.length > 0) {
+            res.json({ status: true, message: "Get all creative work category.", data: creativeWorkCat });
+        } else {
+            res.status(404).json({ status: false, message: "No data found.", data: [] });
+        }
+    } catch (err) {
+        console.error('Error fetching creative work categories:', err);
+        res.status(500).json({ status: false, message: "Internal server error", data: [] });
+    }
+};
+
+const getCreativeWorkData = async (req, res) => {
+    const schema = Joi.object({
+        lang_id: Joi.number().optional(),
+        cat_id: Joi.number().required(),
+    });
+
+    const { error, value } = schema.validate(req.body);
+    if (error) return res.status(400).json({ status: false, message: error.details[0].message, data: [] });
+    const { cat_id, lang_id } = value;
+
+    try {
+        const creativeWorkData = await CreativeWorkModel.findAll({ where: { lang_id, cat_id } });
+        if (creativeWorkData.length > 0) {
+            res.json({ status: true, message: "Get all creative work data.", data: creativeWorkData });
+        } else {
+            res.status(404).json({ status: false, message: "No data found.", data: [] });
+        }
+    } catch (err) {
+        console.error('Error fetching creative work data:', err);
+        res.status(500).json({ status: false, message: "Internal server error", data: [] });
+    }
+};
+
+module.exports = { insertDetailsOfWomen, pregnancyWeekDetails, getExercisesByTrimester, getArticlesByCategory, getMusicByCategories, weekDiet, aboutPreCat, aboutPreDetailsByCat, getVedicData, viewsCount, dietMonth, getDietRecipe, getCreativeWorkCat, getCreativeWorkData };

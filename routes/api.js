@@ -14,4 +14,6 @@ router.post("/get_vedic_data", apiController.getVedicData);
 router.post("/views_count", apiController.viewsCount);
 router.post("/diet_month", apiController.dietMonth);
 router.post("/get_diet_recipe", apiController.getDietRecipe);
+router.post("/get_creative_work_cat", apiController.getCreativeWorkCat);
+router.post("/get_creative_work_data", apiController.getCreativeWorkData);
 module.exports = router;

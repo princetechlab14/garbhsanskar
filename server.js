@@ -59,6 +59,17 @@ const synchronizeAndSeed = async () => {
     await db.sequelize.sync({ force: true });
     // await db.sequelize.sync();
     await require("./seeder/admin-seeder").admin();
+    await require("./seeder/language-seeder").language();
+    await require("./seeder/create-work-cat-seeder").WorkCategory();
+    await require("./seeder/creative-work-seeder").creativeWorkData();
+    await require("./seeder/avoid-food-seeder").AvoidFood();
+    await require("./seeder/diet-seeder").Diet();
+    await require("./seeder/exercises-seeder").exercises();
+    await require("./seeder/music-categories-seeder").MusicCategory();
+    await require("./seeder/music-seeder").Music();
+    await require("./seeder/pregnancy-seeder").pregnancy();
+    await require("./seeder/pregnancy-details-seeder").pregnancyDetail();
+    await require("./seeder/pregnancy-week-details-seeder").pregnancyWeekDetail();
   } catch (error) {
     console.error("Error during synchronization and seeding:", error);
   }
