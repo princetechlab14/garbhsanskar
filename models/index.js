@@ -48,6 +48,7 @@ db.WorkCategoryModel = require('./workCategoryModel')(sequelize, Sequelize, Data
 
 
 db.ArticleModel.belongsTo(db.CategoryModel, { foreignKey: "category_id", as: "mainCategory", onDelete: "CASCADE", });
+db.CategoryModel.hasMany(db.ArticleModel, { foreignKey: "category_id", as: "articles", onDelete: "CASCADE", });
 db.ArticleModel.belongsTo(db.LangModel, { foreignKey: "lang_id", as: "mainLang", onDelete: "CASCADE", });
 db.AvoidFoodModel.belongsTo(db.LangModel, { foreignKey: "lang_id", as: "mainLangFood", onDelete: "CASCADE", });
 db.WorkCategoryModel.belongsTo(db.LangModel, { foreignKey: "lang_id", as: "mainWorkCategory", onDelete: "CASCADE", });

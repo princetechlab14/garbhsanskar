@@ -4,6 +4,7 @@ const { deleteObjS3 } = require("../services/fileupload");
 const Joi = require("joi");
 const fs = require("fs");
 const path = require("path");
+const { slugify: translitSlugify } = require('transliteration');
 
 const exerciseSchema = Joi.object({
     name: Joi.string().required(),
@@ -48,7 +49,10 @@ const store = async (req, res) => {
         const { error, value } = exerciseSchema.validate(req.body);
         if (error) return res.render("exercise/create", { title: "Exercise Create", error: error.details[0].message, languages });
 
-        const slug = value.name.toLowerCase().replace(/\s+/g, "-").replace(/[^\w\-]+/g, "");
+        let slug = translitSlugify(value.name || '', { lowercase: true });
+        if (!slug || slug.trim() === '') {
+            slug = `no-valid-slug-${Date.now()}`;
+        }
         let imagePath = null;
         if (req.file) {
             if (process.env.STORAGE_DRIVER === "s3") {
@@ -115,7 +119,10 @@ const update = async (req, res) => {
             }
         }
 
-        const slug = value.name.toLowerCase().replace(/\s+/g, "-").replace(/[^\w\-]+/g, "");
+        let slug = translitSlugify(value.name || '', { lowercase: true });
+        if (!slug || slug.trim() === '') {
+            slug = `no-valid-slug-${Date.now()}`;
+        }
         const updateData = { ...value, slug, image: imagePath };
         await ExerciseModel.update(updateData, { where: { id } });
         res.redirect(`/admin/exercise`);

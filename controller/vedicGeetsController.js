@@ -1,6 +1,7 @@
 const { Op } = require("sequelize");
 const { LangModel, VedicGeetModel } = require("../models");
 const Joi = require("joi");
+const { slugify: translitSlugify } = require('transliteration');
 
 const vedicGeetsSchema = Joi.object({
     lang_id: Joi.number().integer().optional(),
@@ -44,7 +45,10 @@ const store = async (req, res) => {
         const { error, value } = vedicGeetsSchema.validate(req.body);
         if (error) return res.render("vedicGeets/create", { title: "Vedic Geets Create", error: error.details[0].message, languages });
 
-        const slug = value.title.toLowerCase().replace(/\s+/g, "-").replace(/[^\w\-]+/g, "");
+        let slug = translitSlugify(value.title || '', { lowercase: true });
+        if (!slug || slug.trim() === '') {
+            slug = `no-valid-slug-${Date.now()}`;
+        }
         const newData = { ...value, slug };
         await VedicGeetModel.create(newData);
         res.redirect("/admin/vedic-geets");
@@ -82,7 +86,10 @@ const update = async (req, res) => {
         const { error, value } = vedicGeetsSchema.validate(req.body);
         if (error) return res.render("vedicGeets/edit", { title: "Vedic Geets Edit", vedicGeets, error: error.details[0].message, languages });
 
-        const slug = value.title.toLowerCase().replace(/\s+/g, "-").replace(/[^\w\-]+/g, "");
+        let slug = translitSlugify(value.title || '', { lowercase: true });
+        if (!slug || slug.trim() === '') {
+            slug = `no-valid-slug-${Date.now()}`;
+        }
         const updateData = { ...value, slug };
         await VedicGeetModel.update(updateData, { where: { id } });
         res.redirect(`/admin/vedic-geets`);

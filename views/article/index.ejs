@@ -159,13 +159,13 @@
                             {
                                 data: null,
                                 render: function (data, type, row) {
-                                    return row?.mainCategory?.name;
+                                    return row?.mainCategory?.name || '';
                                 }
                             },
                             {
                                 data: null,
                                 render: function (data, type, row) {
-                                    return row?.mainLang?.name;
+                                    return row?.mainLang?.name || '';
                                 }
                             },
                             { data: "name" },

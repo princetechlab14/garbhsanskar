@@ -163,7 +163,7 @@
                             { data: "id" },
                             {
                                 data: null,
-                                render: function (data, type, row) { return row?.mainLangPregWeekDetail?.name; }
+                                render: function (data, type, row) { return row?.mainLangPregWeekDetail?.name || ''; }
                             },
                             { data: "week_count" },
                             { data: "baby_image" },

@@ -1,6 +1,7 @@
 const { Op } = require("sequelize");
 const { LangModel, MusicCategoryModel, MusicModel } = require("../models");
 const Joi = require("joi");
+const { slugify: translitSlugify } = require('transliteration');
 
 const musicSchema = Joi.object({
     name: Joi.string().required(),
@@ -47,7 +48,10 @@ const store = async (req, res) => {
         const { error, value } = musicSchema.validate(req.body);
         if (error) return res.render("music/create", { title: "Music Create", error: error.details[0].message, categories, languages });
 
-        const slug = value.name.toLowerCase().replace(/\s+/g, "-").replace(/[^\w\-]+/g, "");
+        let slug = translitSlugify(value.name || '', { lowercase: true });
+        if (!slug || slug.trim() === '') {
+            slug = `no-valid-slug-${Date.now()}`;
+        }
         const newData = { ...value, slug };
 
         // Handle uploaded files
@@ -108,7 +112,10 @@ const update = async (req, res) => {
         const { error, value } = musicSchema.validate(req.body);
         if (error) return res.render("music/edit", { title: "Music Edit", music, error: error.details[0].message, categories, languages });
 
-        const slug = value.name.toLowerCase().replace(/\s+/g, "-").replace(/[^\w\-]+/g, "");
+        let slug = translitSlugify(value.name || '', { lowercase: true });
+        if (!slug || slug.trim() === '') {
+            slug = `no-valid-slug-${Date.now()}`;
+        }
         const updateData = { ...value, slug };
         await MusicModel.update(updateData, { where: { id } });
         res.redirect(`/admin/music`);

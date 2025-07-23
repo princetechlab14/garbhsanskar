@@ -156,7 +156,7 @@
                             {
                                 data: null,
                                 render: function (data, type, row) {
-                                    return row?.mainLangFood?.name;
+                                    return row?.mainLangFood?.name || '';
                                 }
                             },
                             { data: "month" },

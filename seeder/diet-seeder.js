@@ -744,6 +744,31 @@ const Diet = async () => {
             }
         }
 
+        const parseDirections = (rawDirections) => {
+            const cleanedStr = typeof rawDirections === 'string' ? rawDirections.replace(/\\(?!["\\/bfnrtu])/g, '\\\\').replace(/[\u0000-\u001F]+/g, '') : rawDirections;
+
+            let parsed;
+            try {
+                parsed = typeof cleanedStr === 'string' ? JSON.parse(cleanedStr) : cleanedStr;
+            } catch (err) {
+                console.warn("Invalid directions JSON:", err.message);
+                return [];
+            }
+
+            if (!Array.isArray(parsed)) return [];
+
+            return parsed.map(section => {
+                const title = section.big_title || '';
+                const details = Array.isArray(section.details)
+                    ? section.details.map(detail => ({
+                        title: detail.title || '',
+                        description: (detail.description || '').replace(/\\n/g, '\n').replace(/\\u27BB/g, '➻').trim()
+                    }))
+                    : [];
+
+                return { title, details };
+            });
+        };
 
         // Step 3: Map to add slug and timestamps
         const insertRecords = rawRecords.map(record => {
@@ -754,7 +779,7 @@ const Diet = async () => {
                 slug = `no-valid-slug-${Date.now()}`;
             }
             const ingredients = safeJSONParse(record.ingredients, record.ingredients);
-            const directions = safeJSONParse(record.directions, record.directions);
+            const directions = parseDirections(record.directions);
 
             return {
                 ...record,

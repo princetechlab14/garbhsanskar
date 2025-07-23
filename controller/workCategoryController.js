@@ -1,6 +1,7 @@
 const { Op } = require("sequelize");
 const { LangModel, WorkCategoryModel } = require("../models");
 const Joi = require("joi");
+const { slugify: translitSlugify } = require('transliteration');
 
 const workCategorySchema = Joi.object({
     lang_id: Joi.number().integer().optional(),
@@ -41,7 +42,10 @@ const store = async (req, res) => {
         const { error, value } = workCategorySchema.validate(req.body);
         if (error) return res.render("workCategory/create", { title: "Work Category Create", error: error.details[0].message, languages });
 
-        const slug = value.name.toLowerCase().replace(/\s+/g, "-").replace(/[^\w\-]+/g, "");
+        let slug = translitSlugify(value.name || '', { lowercase: true });
+        if (!slug || slug.trim() === '') {
+            slug = `no-valid-slug-${Date.now()}`;
+        }
         const newData = { ...value, slug };
         await WorkCategoryModel.create(newData);
         res.redirect("/admin/work-category");
@@ -79,7 +83,10 @@ const update = async (req, res) => {
         const { error, value } = workCategorySchema.validate(req.body);
         if (error) return res.render("workCategory/edit", { title: "Work Category Food Edit", workCategory, error: error.details[0].message, languages });
 
-        const slug = value.name.toLowerCase().replace(/\s+/g, "-").replace(/[^\w\-]+/g, "");
+        let slug = translitSlugify(value.name || '', { lowercase: true });
+        if (!slug || slug.trim() === '') {
+            slug = `no-valid-slug-${Date.now()}`;
+        }
         const updateData = { ...value, slug };
         await WorkCategoryModel.update(updateData, { where: { id } });
         res.redirect(`/admin/work-category`);

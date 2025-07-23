@@ -3,6 +3,13 @@
 
 <head>
     <%- include("../partial/head", { title: "Edit Preg Week Details" }) %>
+        <link rel=" stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.5.0/plugins/templates/dialogs/templates.min.css"
+            integrity="sha512-wnSq9xWRZZ+edU6ZQXbEkxVh0LYC14YlUX81izxCc2mRrHBNjwHS6mz7rn1KMfyBuQv77ApGySQMhw8vyY6iAA=="
+            crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.5.0/ckeditor.js"
+            integrity="sha512-qy5XxLQ56sbeV31D+eEIozHcy375unZgFty0fgsadpKMy58IV8FnvoO9e/eAY3UhEGB1BJSy6xCfsmGZtwWxWg=="
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
 
 <body>
@@ -413,6 +420,38 @@
                     if (e.target.classList.contains('remove-description-check-up')) {
                         e.target.closest('.description-check-up-block').remove();
                     }
+                });
+
+                CKEDITOR.replace("ingredients", {
+                    extraPlugins: "justify,colorbutton,font",
+                    toolbar: [
+                        { name: "document", items: ["Source", "Preview", "Print"] },
+                        { name: "clipboard", items: ["Cut", "Copy", "Paste", "Undo", "Redo"] },
+                        { name: "basicstyles", items: ["Bold", "Italic", "Underline", "RemoveFormat"] },
+                        { name: "paragraph", items: ["NumberedList", "BulletedList", "JustifyLeft", "JustifyCenter", "JustifyRight"] },
+                        { name: "links", items: ["Link", "Unlink"] },
+                        { name: "insert", items: ["Image", "Table", "Smiley", "SpecialChar"] },
+                        { name: "styles", items: ["Styles", "Format", "Font", "FontSize"] },
+                        { name: "colors", items: ["TextColor", "BGColor"] },
+                        { name: "tools", items: ["Maximize"] },
+                    ],
+                    removeDialogTabs: "image:advanced;link:advanced",
+                });
+
+                CKEDITOR.replace("method", {
+                    extraPlugins: "justify,colorbutton,font",
+                    toolbar: [
+                        { name: "document", items: ["Source", "Preview", "Print"] },
+                        { name: "clipboard", items: ["Cut", "Copy", "Paste", "Undo", "Redo"] },
+                        { name: "basicstyles", items: ["Bold", "Italic", "Underline", "RemoveFormat"] },
+                        { name: "paragraph", items: ["NumberedList", "BulletedList", "JustifyLeft", "JustifyCenter", "JustifyRight"] },
+                        { name: "links", items: ["Link", "Unlink"] },
+                        { name: "insert", items: ["Image", "Table", "Smiley", "SpecialChar"] },
+                        { name: "styles", items: ["Styles", "Format", "Font", "FontSize"] },
+                        { name: "colors", items: ["TextColor", "BGColor"] },
+                        { name: "tools", items: ["Maximize"] },
+                    ],
+                    removeDialogTabs: "image:advanced;link:advanced",
                 });
             </script>
 

@@ -153,7 +153,7 @@
                             {
                                 data: null,
                                 render: function (data, type, row) {
-                                    return row?.mainWorkCategory?.name;
+                                    return row?.mainWorkCategory?.name || '';
                                 }
                             },
                             { data: "name" },

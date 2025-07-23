@@ -1,4 +1,5 @@
 const { WorkCategoryModel, LangModel } = require("../models");
+const { slugify: translitSlugify } = require('transliteration');
 
 const WorkCategory = async () => {
     try {
@@ -35,7 +36,17 @@ const WorkCategory = async () => {
             { "lang_id": langMap['es'], "name": "Actividades educativas y de mejora del conocimiento", "image": "https:\/\/s29814.pcdn.co\/wp-content\/uploads\/2022\/12\/shutterstock_1847661151.jpg.optimal.jpg", "created_at": new Date(), "updated_at": new Date(), "deleted_at": null },
             { "lang_id": langMap['es'], "name": "Actividades físicas y relacionadas con la salud", "image": "https:\/\/www.kidrovia.com\/wp-content\/uploads\/2023\/04\/Kidrovia-6-1155x770.jpeg", "created_at": new Date(), "updated_at": new Date(), "deleted_at": null }
         ];
-        await WorkCategoryModel.bulkCreate(insertRecords);
+
+        const insertCatRecords = insertRecords.map(record => {
+            let rawName = record.name || '';
+            let slug = translitSlugify(rawName, { lowercase: true });
+
+            if (!slug || slug.trim() === '') {
+                slug = `no-valid-slug-${Date.now()}`;
+            }
+            return { ...record, slug, created_at: new Date(), updated_at: new Date(), deleted_at: null };
+        });
+        await WorkCategoryModel.bulkCreate(insertCatRecords);
     } catch (error) {
         console.error("WorkCategory seeder:", error);
     }

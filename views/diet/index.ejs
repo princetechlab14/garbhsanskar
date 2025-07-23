@@ -167,7 +167,7 @@
                             {
                                 data: null,
                                 render: function (data, type, row) {
-                                    return row?.mainDiet?.name;
+                                    return row?.mainDiet?.name || '';
                                 }
                             },
                             { data: "month" },

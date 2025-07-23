@@ -2,6 +2,7 @@ const { CategoryModel } = require("../models");
 const Joi = require("joi");
 const { deleteObjS3 } = require("../services/fileupload");
 const { Op } = require("sequelize");
+const { slugify: translitSlugify } = require('transliteration');
 
 const categorySchema = Joi.object({
     name: Joi.string().required(),
@@ -62,7 +63,10 @@ const store = async (req, res) => {
         return res.render("category/create", { title: "Category Create", error: error.details[0].message, category: value });
     }
     try {
-        const slug = value.name.toLowerCase().replace(/\s+/g, "-").replace(/[^\w\-]+/g, "");
+        let slug = translitSlugify(value.name || '', { lowercase: true });
+        if (!slug || slug.trim() === '') {
+            slug = `no-valid-slug-${Date.now()}`;
+        }
         await CategoryModel.create({ ...value, image: imagePath, slug });
         res.redirect("/admin/category");
     } catch (error) {
@@ -94,7 +98,10 @@ const update = async (req, res) => {
             return res.render("category/edit", { title: "Edit Category", category, error: error.details[0].message });
         }
         if (imagePath && category.image) await deleteObjS3(category.image);
-        const slug = value.name.toLowerCase().replace(/\s+/g, "-").replace(/[^\w\-]+/g, "");
+        let slug = translitSlugify(value.name || '', { lowercase: true });
+        if (!slug || slug.trim() === '') {
+            slug = `no-valid-slug-${Date.now()}`;
+        }
         await CategoryModel.update({ ...value, image: imagePath || category.image, slug }, { where: { id } });
         res.redirect("/admin/category");
     } catch (error) {

@@ -2,6 +2,7 @@ const { Op } = require("sequelize");
 const { LangModel, PregnancyModel } = require("../models");
 const Joi = require("joi");
 const { deleteObjS3 } = require("../services/fileupload");
+const { slugify: translitSlugify } = require('transliteration');
 
 const pregnanciesCategorySchema = Joi.object({
     lang_id: Joi.number().integer().optional(),
@@ -41,7 +42,10 @@ const store = async (req, res) => {
         const { error, value } = pregnanciesCategorySchema.validate(req.body);
         if (error) return res.render("pregnancies/create", { title: "Pregnancies Create", error: error.details[0].message, languages });
 
-        const slug = value.name.toLowerCase().replace(/\s+/g, "-").replace(/[^\w\-]+/g, "");
+        let slug = translitSlugify(value.name || '', { lowercase: true });
+        if (!slug || slug.trim() === '') {
+            slug = `no-valid-slug-${Date.now()}`;
+        }
         const newData = { ...value, slug };
         if (req.file) {
             if (process.env.STORAGE_DRIVER === "s3") {
@@ -86,7 +90,10 @@ const update = async (req, res) => {
         const { error, value } = pregnanciesCategorySchema.validate(req.body);
         if (error) return res.render("pregnancies/edit", { title: "Pregnancies Edit", pregnancies, error: error.details[0].message, languages });
 
-        const slug = value.name.toLowerCase().replace(/\s+/g, "-").replace(/[^\w\-]+/g, "");
+        let slug = translitSlugify(value.name || '', { lowercase: true });
+        if (!slug || slug.trim() === '') {
+            slug = `no-valid-slug-${Date.now()}`;
+        }
         const updateData = { ...value, slug };
         // Handle new image uploads
         if (req.file) {

@@ -159,13 +159,13 @@
                             {
                                 data: null,
                                 render: function (data, type, row) {
-                                    return row?.mainCategoryMusic?.name;
+                                    return row?.mainCategoryMusic?.name || '';
                                 }
                             },
                             {
                                 data: null,
                                 render: function (data, type, row) {
-                                    return row?.mainMusic?.name;
+                                    return row?.mainMusic?.name || '';
                                 }
                             },
                             { data: "name" },

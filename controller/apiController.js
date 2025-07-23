@@ -1,7 +1,6 @@
 const moment = require("moment");
-const { WomenDetailsModel, PregWeekDetailModel, ExerciseModel, ArticleModel, MusicModel, MusicCategoryModel, PregnancyModel, PregnancyDetailModel, sequelize, VedicGeetModel, DietModel, AvoidFoodModel, WorkCategoryModel, CreativeWorkModel } = require("../models");
+const { WomenDetailsModel, PregWeekDetailModel, ExerciseModel, ArticleModel, MusicModel, MusicCategoryModel, PregnancyModel, PregnancyDetailModel, sequelize, VedicGeetModel, DietModel, AvoidFoodModel, WorkCategoryModel, CreativeWorkModel, CategoryModel } = require("../models");
 const Joi = require("joi");
-const { groupBy } = require("lodash");
 
 // insert_details_of_women
 const insertDetailsOfWomen = async (req, res) => {
@@ -442,4 +441,28 @@ const getCreativeWorkData = async (req, res) => {
     }
 };
 
-module.exports = { insertDetailsOfWomen, pregnancyWeekDetails, getExercisesByTrimester, getArticlesByCategory, getMusicByCategories, weekDiet, aboutPreCat, aboutPreDetailsByCat, getVedicData, viewsCount, dietMonth, getDietRecipe, getCreativeWorkCat, getCreativeWorkData };
+const getArticleData = async (req, res) => {
+    const schema = Joi.object({
+        lang_id: Joi.number().required(),
+    });
+
+    const { error, value } = schema.validate(req.body);
+    if (error) return res.status(400).json({ status: false, message: error.details[0].message, data: [] });
+    const { lang_id } = value;
+
+    try {
+        const categoriesArticle = await CategoryModel.findAll({
+            where: { status: 'Active' },
+            attributes: ['id', 'name', 'slug', 'image'],
+            include: [
+                { model: ArticleModel, as: "articles", attributes: ['id', 'category_id', 'lang_id', 'name', 'slug', 'image', 'short_desc', 'description'], where: { lang_id, status: 'Active' } },
+            ]
+        });
+        return res.json({ status: true, message: "Get all creative work data.", data: categoriesArticle });
+    } catch (error) {
+        console.error('Error fetching article data:', error);
+        res.status(500).json({ status: false, message: "Internal server error", data: [] });
+    }
+};
+
+module.exports = { insertDetailsOfWomen, pregnancyWeekDetails, getExercisesByTrimester, getArticlesByCategory, getMusicByCategories, weekDiet, aboutPreCat, aboutPreDetailsByCat, getVedicData, viewsCount, dietMonth, getDietRecipe, getCreativeWorkCat, getCreativeWorkData, getArticleData };

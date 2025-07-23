@@ -1,6 +1,7 @@
 const { Op } = require("sequelize");
 const { LangModel, WomenDetailsModel } = require("../models");
 const Joi = require("joi");
+const { slugify: translitSlugify } = require('transliteration');
 
 const womenDetailsSchema = Joi.object({
     lang_id: Joi.number().integer().optional(),
@@ -45,7 +46,10 @@ const store = async (req, res) => {
         const { error, value } = womenDetailsSchema.validate(req.body);
         if (error) return res.render("womenDetails/create", { title: "Women Details Create", error: error.details[0].message, languages });
 
-        const slug = value.name.toLowerCase().replace(/\s+/g, "-").replace(/[^\w\-]+/g, "");
+        let slug = translitSlugify(value.name || '', { lowercase: true });
+        if (!slug || slug.trim() === '') {
+            slug = `no-valid-slug-${Date.now()}`;
+        }
         const newData = { ...value, slug };
         await WomenDetailsModel.create(newData);
         res.redirect("/admin/women-details");
@@ -83,7 +87,10 @@ const update = async (req, res) => {
         const { error, value } = womenDetailsSchema.validate(req.body);
         if (error) return res.render("womenDetails/edit", { title: "Women Details Edit", womenDetails, error: error.details[0].message, languages });
 
-        const slug = value.name.toLowerCase().replace(/\s+/g, "-").replace(/[^\w\-]+/g, "");
+        let slug = translitSlugify(value.name || '', { lowercase: true });
+        if (!slug || slug.trim() === '') {
+            slug = `no-valid-slug-${Date.now()}`;
+        }
         const updateData = { ...value, slug };
         await WomenDetailsModel.update(updateData, { where: { id } });
         res.redirect(`/admin/women-details`);

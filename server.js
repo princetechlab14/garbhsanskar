@@ -70,6 +70,9 @@ const synchronizeAndSeed = async () => {
     await require("./seeder/pregnancy-seeder").pregnancy();
     await require("./seeder/pregnancy-details-seeder").pregnancyDetail();
     await require("./seeder/pregnancy-week-details-seeder").pregnancyWeekDetail();
+    await require("./seeder/article-seeder").ArticleSeed();
+    await require("./seeder/vedic-geet-seeder").vedicGeet();
+    await require("./seeder/women-details-seeder").womenDetail();
   } catch (error) {
     console.error("Error during synchronization and seeding:", error);
   }

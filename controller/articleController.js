@@ -4,6 +4,7 @@ const { deleteObjS3 } = require("../services/fileupload");
 const Joi = require("joi");
 const fs = require("fs");
 const path = require("path");
+const { slugify: translitSlugify } = require('transliteration');
 
 const articleSchema = Joi.object({
     name: Joi.string().required(),
@@ -49,7 +50,10 @@ const store = async (req, res) => {
         const { error, value } = articleSchema.validate(req.body);
         if (error) return res.render("article/create", { title: "Article Create", error: error.details[0].message, categories, languages });
 
-        const slug = value.name.toLowerCase().replace(/\s+/g, "-").replace(/[^\w\-]+/g, "");
+        let slug = translitSlugify(value.name || '', { lowercase: true });
+        if (!slug || slug.trim() === '') {
+            slug = `no-valid-slug-${Date.now()}`;
+        }
         let imagePath = null;
         if (req.file) {
             if (process.env.STORAGE_DRIVER === "s3") {
@@ -122,7 +126,10 @@ const update = async (req, res) => {
             }
         }
 
-        const slug = value.name.toLowerCase().replace(/\s+/g, "-").replace(/[^\w\-]+/g, "");
+        let slug = translitSlugify(value.name || '', { lowercase: true });
+        if (!slug || slug.trim() === '') {
+            slug = `no-valid-slug-${Date.now()}`;
+        }
         const description = parseBigTitles(req.body);
         const updateArticle = { ...value, slug, image: imagePath, description };
         await ArticleModel.update(updateArticle, { where: { id: articleId } });

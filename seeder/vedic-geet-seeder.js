@@ -1,0 +1,68 @@
+const { LangModel, VedicGeetModel } = require("../models");
+const { slugify: translitSlugify } = require('transliteration');
+
+
+const vedicGeet = async () => {
+    try {
+        // Step 1: Get all language slugs and their IDs
+        const langs = await LangModel.findAll({ attributes: ['id', 'slug'] });
+        const langMap = {};
+        langs.forEach(lang => {
+            langMap[lang.slug] = lang.id;
+        });
+
+        const rawRecords = [
+            { "lang_id": langMap['en'], "title": "Complete Garbha Chalisa", "description": "The only Garbh Sanskar course in the world which provides daily observance of Garbh Sanskar.", "img_url": "https:\/\/media.istockphoto.com\/id\/1251633178\/photo\/spiritual-and-emotional-concept-of-harmony-with-nature-in-maternity-time-pregnant-woman.jpg?s=612x612&w=0&k=20&c=kbK34otQF0VCrWEbuhcgReoA-Y-133b8SeP7IwjgJQQ=", "webview_link": "https:\/\/www.youtube.com\/watch?v=rDQxBqlhSnE", "views": "77", "insert_date": "2023-10-02 12:27:22" },
+            { "lang_id": langMap['en'], "title": "Sampoorna Garbhachalisa - Vedic Garbha Sanskar Song", "description": "Described in this complete Garbh Chalisa through songs, music and pictures.", "img_url": "https:\/\/media.istockphoto.com\/id\/1463462387\/photo\/quran-muslim-and-pregnant-woman-prayer-to-allah-god-or-holy-spirit-for-islamic-religion-faith.jpg?s=612x612&w=0&k=20&c=fIzox2J9OJNuX_9jRWj8nTxXQu3lH-lkIcDQ3NSGDl0=", "webview_link": "https:\/\/www.youtube.com\/watch?v=KcRX3FZGMk8", "views": "88", "insert_date": "2023-10-02 12:27:22" },
+            { "lang_id": langMap['en'], "title": "Garbh Geeta with Lyrics", "description": "Garbh Geeta with Lyrics | Garbh Sanskar | Krishna Arjuna dialogue", "img_url": "https:\/\/wpcf.babychakra.com\/wp-content\/uploads\/2022\/07\/admin-panel-image-6482f469-fc4a-4617-a73a-ef25d64b310b-1500364789936.jpeg", "webview_link": "https:\/\/www.youtube.com\/watch?v=JG70wdp3urU", "views": "96", "insert_date": "2023-10-02 12:34:40" },
+            { "lang_id": langMap['en'], "title": "Womb protection mantra", "description": "Pregnancy Mantra in Garbh Sanskar", "img_url": "https:\/\/i0.wp.com\/www.muslimacoaching.com\/wp-content\/uploads\/2020\/08\/pregnant-belly.jpg?fit=1000%2C700&ssl=1", "webview_link": "https:\/\/www.youtube.com\/watch?v=CnrwOwHtXOM", "views": "115", "insert_date": "2023-10-02 12:34:40" },
+            { "lang_id": langMap['en'], "title": "Womb dialogues", "description": "Mother's first conversation with her child", "img_url": "https:\/\/i.pinimg.com\/564x\/88\/02\/9b\/88029bcc8dd0948462f6d873b1852f3f.jpg", "webview_link": "https:\/\/www.youtube.com\/watch?v=4zZ_kZGzXGw", "views": "109", "insert_date": "2023-10-02 12:35:53" },
+            { "lang_id": langMap['en'], "title": "Garbh Sanskar [What, why and how?]", "description": "How Garbh Sanskar Music Works, How Garbh Sanskar Mantra Works, Miracles of Online Garbhsanskar, garbh sanskar at home", "img_url": "https:\/\/www.eastrohelp.com\/blog\/wp-content\/uploads\/2022\/08\/Purple-Gradient-Business-Channel-Youtube-Thumbnails-2022-08-27T122419-compressed.jpg", "webview_link": "https:\/\/www.youtube.com\/watch?v=eiN3ldGZk9s", "views": "113", "insert_date": "2023-10-02 12:35:53" },
+            { "lang_id": langMap['en'], "title": "Vedic womb protection mantra", "description": "Pregnancy Mantras in Sanskrit and Hindi", "img_url": "https:\/\/bejandaruwalla.com\/cdn\/shop\/articles\/Pregnancy_Mantra@2x.jpg?v=1667468598", "webview_link": "https:\/\/www.youtube.com\/watch?v=7s4Ui8gzMnQ", "views": "134", "insert_date": "2023-10-02 12:35:53" },
+            { "lang_id": langMap['hi'], "title": "संपूर्ण गर्भ चालीसा", "description": "विश्व में एकमात्र गर्भ संस्कार पाठ्यक्रम जो प्रतिदिन गर्भ संस्कार का पालन कराता है।", "img_url": "https:\/\/media.istockphoto.com\/id\/1251633178\/photo\/spiritual-and-emotional-concept-of-harmony-with-nature-in-maternity-time-pregnant-woman.jpg?s=612x612&w=0&k=20&c=kbK34otQF0VCrWEbuhcgReoA-Y-133b8SeP7IwjgJQQ=", "webview_link": "https:\/\/www.youtube.com\/watch?v=rDQxBqlhSnE", "views": "21", "insert_date": "2023-10-31 09:40:09" },
+            { "lang_id": langMap['hi'], "title": "संपूर्ण गर्भचालीसा - वैदिक गर्भ संस्कार गीत", "description": "इस संपूर्ण गर्भ चालीसा में गीत, संगीत और चित्रों के माध्यम से वर्णन किया गया है।", "img_url": "https:\/\/media.istockphoto.com\/id\/1463462387\/photo\/quran-muslim-and-pregnant-woman-prayer-to-allah-god-or-holy-spirit-for-islamic-religion-faith.jpg?s=612x612&w=0&k=20&c=fIzox2J9OJNuX_9jRWj8nTxXQu3lH-lkIcDQ3NSGDl0=", "webview_link": "https:\/\/www.youtube.com\/watch?v=KcRX3FZGMk8", "views": "21", "insert_date": "2023-10-31 09:40:09" },
+            { "lang_id": langMap['hi'], "title": "गीत के साथ गर्भ गीता", "description": "गर्भ गीता गीत के साथ | गर्भ संस्कार | कृष्ण अर्जुन संवाद", "img_url": "https:\/\/wpcf.babychakra.com\/wp-content\/uploads\/2022\/07\/admin-panel-image-6482f469-fc4a-4617-a73a-ef25d64b310b-1500364789936.jpeg", "webview_link": "https:\/\/www.youtube.com\/watch?v=JG70wdp3urU", "views": "31", "insert_date": "2023-10-31 09:40:09" },
+            { "lang_id": langMap['hi'], "title": "गर्भ रक्षा मंत्र", "description": "गर्भ संस्कार में गर्भधारण मंत्र", "img_url": "https:\/\/i0.wp.com\/www.muslimacoaching.com\/wp-content\/uploads\/2020\/08\/pregnant-belly.jpg?fit=1000%2C700&ssl=1", "webview_link": "https:\/\/www.youtube.com\/watch?v=CnrwOwHtXOM", "views": "51", "insert_date": "2023-10-31 09:40:09" },
+            { "lang_id": langMap['hi'], "title": "गर्भ संवाद", "description": "माँ की अपने बच्चे से पहली बातचीत", "img_url": "https:\/\/i.pinimg.com\/564x\/88\/02\/9b\/88029bcc8dd0948462f6d873b1852f3f.jpg", "webview_link": "https:\/\/www.youtube.com\/watch?v=4zZ_kZGzXGw", "views": "47", "insert_date": "2023-10-31 09:40:09" },
+            { "lang_id": langMap['hi'], "title": "गर्भ संस्कार [क्या, क्यों और कैसे?]", "description": "गर्भ संस्कार संगीत कैसे काम करता है, गर्भ संस्कार मंत्र कैसे काम करता है, ऑनलाइन गर्भ संस्कार के चमत्कार, घर पर गर्भ संस्कार", "img_url": "https:\/\/www.eastrohelp.com\/blog\/wp-content\/uploads\/2022\/08\/Purple-Gradient-Business-Channel-Youtube-Thumbnails-2022-08-27T122419-compressed.jpg", "webview_link": "https:\/\/www.youtube.com\/watch?v=eiN3ldGZk9s", "views": "54", "insert_date": "2023-10-31 09:40:09" },
+            { "lang_id": langMap['hi'], "title": "वैदिक गर्भ रक्षा मंत्र", "description": "संस्कृत और हिंदी में गर्भावस्था मंत्र", "img_url": "https:\/\/bejandaruwalla.com\/cdn\/shop\/articles\/Pregnancy_Mantra@2x.jpg?v=1667468598", "webview_link": "https:\/\/www.youtube.com\/watch?v=7s4Ui8gzMnQ", "views": "76", "insert_date": "2023-10-31 09:40:09" },
+            { "lang_id": langMap['gj'], "title": "સંપૂર્ણ ગર્ભ ચાલીસા", "description": "વિશ્વનો એકમાત્ર ગર્ભ સંસ્કાર અભ્યાસક્રમ જે દરરોજ ગર્ભ સંસ્કારનું પાલન કરાવે છે.", "img_url": "https:\/\/media.istockphoto.com\/id\/1251633178\/photo\/spiritual-and-emotional-concept-of-harmony-with-nature-in-maternity-time-pregnant-woman.jpg?s=612x612&w=0&k=20&c=kbK34otQF0VCrWEbuhcgReoA-Y-133b8SeP7IwjgJQQ=", "webview_link": "https:\/\/www.youtube.com\/watch?v=rDQxBqlhSnE", "views": "21", "insert_date": "2023-10-02 12:27:22" },
+            { "lang_id": langMap['gj'], "title": "સંપૂર્ણ ગર્ભચાલીસા - વૈદિક ગર્ભ સંસ્કાર ગીત", "description": "આ સંપૂર્ણ ગર્ભ ચાલીસામાં ગીતો, સંગીત અને ચિત્રો દ્વારા વર્ણવવામાં આવ્યું છે.", "img_url": "https:\/\/media.istockphoto.com\/id\/1463462387\/photo\/quran-muslim-and-pregnant-woman-prayer-to-allah-god-or-holy-spirit-for-islamic-religion-faith.jpg?s=612x612&w=0&k=20&c=fIzox2J9OJNuX_9jRWj8nTxXQu3lH-lkIcDQ3NSGDl0=", "webview_link": "https:\/\/www.youtube.com\/watch?v=KcRX3FZGMk8", "views": "21", "insert_date": "2023-10-02 12:27:22" },
+            { "lang_id": langMap['gj'], "title": "ગાન સાથે ગર્ભ ગીતા", "description": "ગીતા સાથે ગર્ભ ગીતા | ગર્ભ સંસ્કાર | કૃષ્ણ અર્જુન સંવાદ", "img_url": "https:\/\/wpcf.babychakra.com\/wp-content\/uploads\/2022\/07\/admin-panel-image-6482f469-fc4a-4617-a73a-ef25d64b310b-1500364789936.jpeg", "webview_link": "https:\/\/www.youtube.com\/watch?v=JG70wdp3urU", "views": "31", "insert_date": "2023-10-02 12:34:40" },
+            { "lang_id": langMap['gj'], "title": "ગર્ભ સંરક્ષણ મંત્ર", "description": "ગર્ભ સંસ્કારમાં ગર્ભાવસ્થા મંત્ર", "img_url": "https:\/\/i0.wp.com\/www.muslimacoaching.com\/wp-content\/uploads\/2020\/08\/pregnant-belly.jpg?fit=1000%2C700&ssl=1", "webview_link": "https:\/\/www.youtube.com\/watch?v=CnrwOwHtXOM", "views": "51", "insert_date": "2023-10-02 12:34:40" },
+            { "lang_id": langMap['gj'], "title": "ગર્ભ સંવાદ", "description": "માતાની તેના બાળક સાથે પ્રથમ વાતચીત", "img_url": "https:\/\/i.pinimg.com\/564x\/88\/02\/9b\/88029bcc8dd0948462f6d873b1852f3f.jpg", "webview_link": "https:\/\/www.youtube.com\/watch?v=4zZ_kZGzXGw", "views": "47", "insert_date": "2023-10-02 12:35:53" },
+            { "lang_id": langMap['gj'], "title": "ગર્ભ સંસ્કાર [શું, કેમ અને કેવી રીતે?]", "description": "ગર્ભ સંસ્કાર સંગીત કેવી રીતે કામ કરે છે, ગર્ભ સંસ્કાર મંત્ર કેવી રીતે કામ કરે છે, ઓનલાઈન ગર્ભસંસ્કારના ચમત્કારો, ઘરે જ ગર્ભ સંસ્કાર", "img_url": "https:\/\/www.eastrohelp.com\/blog\/wp-content\/uploads\/2022\/08\/Purple-Gradient-Business-Channel-Youtube-Thumbnails-2022-08-27T122419-compressed.jpg", "webview_link": "https:\/\/www.youtube.com\/watch?v=eiN3ldGZk9s", "views": "54", "insert_date": "2023-10-02 12:35:53" },
+            { "lang_id": langMap['gj'], "title": "વૈદિક ગર્ભ રક્ષા મંત્ર", "description": "સંસ્કૃત અને હિન્દીમાં પ્રેગ્નન્સી મંત્રો", "img_url": "https:\/\/bejandaruwalla.com\/cdn\/shop\/articles\/Pregnancy_Mantra@2x.jpg?v=1667468598", "webview_link": "https:\/\/www.youtube.com\/watch?v=7s4Ui8gzMnQ", "views": "76", "insert_date": "2023-10-02 12:35:53" },
+            { "lang_id": langMap['es'], "title": "Completa Garbha Chalisa", "description": "El único curso de Garbh Sanskar en el mundo que ofrece la observancia diaria de Garbh Sanskar.", "img_url": "https:\/\/media.istockphoto.com\/id\/1251633178\/photo\/spiritual-and-emotional-concept-of-harmony-with-nature-in-maternity-time-pregnant-woman.jpg?s=612x612&w=0&k=20&c=kbK34otQF0VCrWEbuhcgReoA-Y-133b8SeP7IwjgJQQ=", "webview_link": "https:\/\/www.youtube.com\/watch?v=rDQxBqlhSnE", "views": "31", "insert_date": "2023-10-02 12:27:22" },
+            { "lang_id": langMap['es'], "title": "Sampoorna Garbhachalisa - Canción védica Garbha Sanskar", "description": "Descrito en este Garbh Chalisa completo a través de canciones, música e imágenes.", "img_url": "https:\/\/media.istockphoto.com\/id\/1463462387\/photo\/quran-muslim-and-pregnant-woman-prayer-to-allah-god-or-holy-spirit-for-islamic-religion-faith.jpg?s=612x612&w=0&k=20&c=fIzox2J9OJNuX_9jRWj8nTxXQu3lH-lkIcDQ3NSGDl0=", "webview_link": "https:\/\/www.youtube.com\/watch?v=KcRX3FZGMk8", "views": "31", "insert_date": "2023-10-02 12:27:22" },
+            { "lang_id": langMap['es'], "title": "Garbh Geeta con letra", "description": "Garbh Geeta con letra | Garbh Sanskar | Diálogo de Krishna Arjuna", "img_url": "https:\/\/wpcf.babychakra.com\/wp-content\/uploads\/2022\/07\/admin-panel-image-6482f469-fc4a-4617-a73a-ef25d64b310b-1500364789936.jpeg", "webview_link": "https:\/\/www.youtube.com\/watch?v=JG70wdp3urU", "views": "44", "insert_date": "2023-10-02 12:34:40" },
+            { "lang_id": langMap['es'], "title": "Mantra de protección del útero", "description": "Mantra del embarazo en Garbh Sanskar", "img_url": "https:\/\/i0.wp.com\/www.muslimacoaching.com\/wp-content\/uploads\/2020\/08\/pregnant-belly.jpg?fit=1000%2C700&ssl=1", "webview_link": "https:\/\/www.youtube.com\/watch?v=CnrwOwHtXOM", "views": "58", "insert_date": "2023-10-02 12:34:40" },
+            { "lang_id": langMap['es'], "title": "Diálogos del útero", "description": "La primera conversación de una madre con su hijo.", "img_url": "https:\/\/i.pinimg.com\/564x\/88\/02\/9b\/88029bcc8dd0948462f6d873b1852f3f.jpg", "webview_link": "https:\/\/www.youtube.com\/watch?v=4zZ_kZGzXGw", "views": "55", "insert_date": "2023-10-02 12:35:53" },
+            { "lang_id": langMap['es'], "title": "Garbh Sanskar [¿Qué, por qué y cómo?]", "description": "Cómo funciona la música Garbh Sanskar, cómo funciona Garbh Sanskar Mantra, milagros de Garbhsanskar en línea, garbh sanskar en casa", "img_url": "https:\/\/www.eastrohelp.com\/blog\/wp-content\/uploads\/2022\/08\/Purple-Gradient-Business-Channel-Youtube-Thumbnails-2022-08-27T122419-compressed.jpg", "webview_link": "https:\/\/www.youtube.com\/watch?v=eiN3ldGZk9s", "views": "62", "insert_date": "2023-10-02 12:35:53" },
+            { "lang_id": langMap['es'], "title": "Mantra védico de protección del útero", "description": "Mantras del embarazo en sánscrito e hindi", "img_url": "https:\/\/bejandaruwalla.com\/cdn\/shop\/articles\/Pregnancy_Mantra@2x.jpg?v=1667468598", "webview_link": "https:\/\/www.youtube.com\/watch?v=7s4Ui8gzMnQ", "views": "84", "insert_date": "2023-10-02 12:35:53" }
+        ];
+
+        // Step 3: Map to add slug and timestamps
+        const insertRecords = rawRecords.map(record => {
+            let rawName = record.name || '';
+            let slug = translitSlugify(rawName, { lowercase: true });
+
+            if (!slug || slug.trim() === '') {
+                slug = `no-valid-slug-${Date.now()}`;
+            }
+
+            return {
+                ...record,
+                slug,
+                created_at: new Date(),
+                updated_at: new Date(),
+                deleted_at: null
+            };
+        });
+
+        await VedicGeetModel.bulkCreate(insertRecords);
+    } catch (error) {
+        console.error("vedicGeet seeder:", error);
+    }
+};
+module.exports = { vedicGeet };

@@ -1,6 +1,7 @@
 const { Op } = require("sequelize");
 const { LangModel, PregnancyModel, PregnancyDetailModel } = require("../models");
 const Joi = require("joi");
+const { slugify: translitSlugify } = require('transliteration');
 
 const pregnancyDetailSchema = Joi.object({
     name: Joi.string().required(),
@@ -46,7 +47,10 @@ const store = async (req, res) => {
         const { error, value } = pregnancyDetailSchema.validate(req.body);
         if (error) return res.render("pregnancyDetail/create", { title: "Pregnancy Detail Create", error: error.details[0].message, categories, languages });
 
-        const slug = value.name.toLowerCase().replace(/\s+/g, "-").replace(/[^\w\-]+/g, "");
+        let slug = translitSlugify(value.name || '', { lowercase: true });
+        if (!slug || slug.trim() === '') {
+            slug = `no-valid-slug-${Date.now()}`;
+        }
         const details = parseBigTitles(req.body);
         const newData = { ...value, slug, details };
         await PregnancyDetailModel.create(newData);
@@ -92,7 +96,10 @@ const update = async (req, res) => {
         const { error, value } = pregnancyDetailSchema.validate(req.body);
         if (error) return res.render("pregnancyDetail/edit", { title: "Pregnancy Detail Edit", pregnancyDetail, error: error.details[0].message, categories, languages });
 
-        const slug = value.name.toLowerCase().replace(/\s+/g, "-").replace(/[^\w\-]+/g, "");
+        let slug = translitSlugify(value.name || '', { lowercase: true });
+        if (!slug || slug.trim() === '') {
+            slug = `no-valid-slug-${Date.now()}`;
+        }
         const big_desc = parseBigTitles(req.body);
         const updateData = { ...value, slug, big_desc };
         await PregnancyDetailModel.update(updateData, { where: { id } });

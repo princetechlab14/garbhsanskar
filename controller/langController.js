@@ -2,6 +2,7 @@ const { LangModel } = require("../models");
 const Joi = require("joi");
 const { deleteObjS3 } = require("../services/fileupload");
 const { Op } = require("sequelize");
+const { slugify: translitSlugify } = require('transliteration');
 
 const langSchema = Joi.object({
     name: Joi.string().required(),
@@ -62,7 +63,10 @@ const store = async (req, res) => {
         return res.render("lang/create", { title: "Lang Create", error: error.details[0].message, lang: value });
     }
     try {
-        const slug = value.name.toLowerCase().replace(/\s+/g, "-").replace(/[^\w\-]+/g, "");
+        let slug = translitSlugify(value.name || '', { lowercase: true });
+        if (!slug || slug.trim() === '') {
+            slug = `no-valid-slug-${Date.now()}`;
+        }
         await LangModel.create({ ...value, image: imagePath, slug });
         res.redirect("/admin/lang");
     } catch (error) {
@@ -94,7 +98,10 @@ const update = async (req, res) => {
             return res.render("lang/edit", { title: "Edit Lang", lang, error: error.details[0].message });
         }
         if (imagePath && lang.image) await deleteObjS3(lang.image);
-        const slug = value.name.toLowerCase().replace(/\s+/g, "-").replace(/[^\w\-]+/g, "");
+        let slug = translitSlugify(value.name || '', { lowercase: true });
+        if (!slug || slug.trim() === '') {
+            slug = `no-valid-slug-${Date.now()}`;
+        }
         await LangModel.update({ ...value, image: imagePath || lang.image, slug }, { where: { id } });
         res.redirect("/admin/lang");
     } catch (error) {

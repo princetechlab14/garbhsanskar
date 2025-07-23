@@ -159,13 +159,13 @@
                             {
                                 data: null,
                                 render: function (data, type, row) {
-                                    return row?.mainCategoryPregnancy?.name;
+                                    return row?.mainCategoryPregnancy?.name || '';
                                 }
                             },
                             {
                                 data: null,
                                 render: function (data, type, row) {
-                                    return row?.mainLangPregnancyDetail?.name;
+                                    return row?.mainLangPregnancyDetail?.name || '';
                                 }
                             },
                             { data: "name" },

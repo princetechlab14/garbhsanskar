@@ -152,7 +152,7 @@
                             {
                                 data: null,
                                 render: function (data, type, row) {
-                                    return row?.mainPregnancies?.name;
+                                    return row?.mainPregnancies?.name || '';
                                 }
                             },
                             { data: "name" },

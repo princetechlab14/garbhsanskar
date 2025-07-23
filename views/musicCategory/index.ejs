@@ -153,7 +153,7 @@
                             {
                                 data: null,
                                 render: function (data, type, row) {
-                                    return row?.mainMusicCategory?.name;
+                                    return row?.mainMusicCategory?.name || '';
                                 }
                             },
                             { data: "name" },

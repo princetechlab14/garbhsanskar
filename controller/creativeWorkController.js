@@ -1,6 +1,7 @@
 const { Op } = require("sequelize");
 const { LangModel, WorkCategoryModel, CreativeWorkModel } = require("../models");
 const Joi = require("joi");
+const { slugify: translitSlugify } = require('transliteration');
 
 const creativeWorkSchema = Joi.object({
     name: Joi.string().required(),
@@ -50,7 +51,10 @@ const store = async (req, res) => {
         const { error, value } = creativeWorkSchema.validate(req.body);
         if (error) return res.render("creativeWork/create", { title: "Creative Work Create", error: error.details[0].message, categories, languages });
 
-        const slug = value.name.toLowerCase().replace(/\s+/g, "-").replace(/[^\w\-]+/g, "");
+        let slug = translitSlugify(value.name || '', { lowercase: true });
+        if (!slug || slug.trim() === '') {
+            slug = `no-valid-slug-${Date.now()}`;
+        }
         const big_desc = parseBigTitles(req.body);
         const newData = { ...value, slug, big_desc };
         await CreativeWorkModel.create(newData);
@@ -96,7 +100,10 @@ const update = async (req, res) => {
         const { error, value } = creativeWorkSchema.validate(req.body);
         if (error) return res.render("creativeWork/edit", { title: "Creative Work Edit", creativeWork, error: error.details[0].message, categories, languages });
 
-        const slug = value.name.toLowerCase().replace(/\s+/g, "-").replace(/[^\w\-]+/g, "");
+        let slug = translitSlugify(value.name || '', { lowercase: true });
+        if (!slug || slug.trim() === '') {
+            slug = `no-valid-slug-${Date.now()}`;
+        }
         const big_desc = parseBigTitles(req.body);
         const updateData = { ...value, slug, big_desc };
         await CreativeWorkModel.update(updateData, { where: { id } });
