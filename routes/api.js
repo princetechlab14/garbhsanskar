@@ -17,4 +17,5 @@ router.post("/get_diet_recipe", apiController.getDietRecipe);
 router.post("/get_creative_work_cat", apiController.getCreativeWorkCat);
 router.post("/get_creative_work_data", apiController.getCreativeWorkData);
 router.post("/category-articles", apiController.getArticleData);
+router.get("/languages", apiController.languageList)
 module.exports = router;

@@ -1,6 +1,7 @@
 const moment = require("moment");
-const { WomenDetailsModel, PregWeekDetailModel, ExerciseModel, ArticleModel, MusicModel, MusicCategoryModel, PregnancyModel, PregnancyDetailModel, sequelize, VedicGeetModel, DietModel, AvoidFoodModel, WorkCategoryModel, CreativeWorkModel, CategoryModel } = require("../models");
+const { WomenDetailsModel, PregWeekDetailModel, ExerciseModel, ArticleModel, MusicModel, MusicCategoryModel, PregnancyModel, PregnancyDetailModel, sequelize, VedicGeetModel, DietModel, AvoidFoodModel, WorkCategoryModel, CreativeWorkModel, CategoryModel, LangModel } = require("../models");
 const Joi = require("joi");
+const { where } = require("sequelize");
 
 // insert_details_of_women
 const insertDetailsOfWomen = async (req, res) => {
@@ -465,4 +466,14 @@ const getArticleData = async (req, res) => {
     }
 };
 
-module.exports = { insertDetailsOfWomen, pregnancyWeekDetails, getExercisesByTrimester, getArticlesByCategory, getMusicByCategories, weekDiet, aboutPreCat, aboutPreDetailsByCat, getVedicData, viewsCount, dietMonth, getDietRecipe, getCreativeWorkCat, getCreativeWorkData, getArticleData };
+const languageList = async (req, res) => {
+    try {
+        const langList = await LangModel.findAll({ where: { status: 'Active' }, attributes: ['id', 'name', 'slug', 'image'] });
+        return res.json({ status: true, message: "Get all creative work data.", data: langList });
+    } catch (error) {
+        console.error('Error fetching article data:', error);
+        res.status(500).json({ status: false, message: "Internal server error", data: [] });
+    }
+};
+
+module.exports = { insertDetailsOfWomen, pregnancyWeekDetails, getExercisesByTrimester, getArticlesByCategory, getMusicByCategories, weekDiet, aboutPreCat, aboutPreDetailsByCat, getVedicData, viewsCount, dietMonth, getDietRecipe, getCreativeWorkCat, getCreativeWorkData, getArticleData, languageList };
