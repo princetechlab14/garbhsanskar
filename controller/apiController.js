@@ -177,7 +177,7 @@ const weekDiet = async (req, res) => {
     const { lang_id } = value;
 
     try {
-        const weeks = await PregWeekDetailModel.findAll({ where: { lang_id }, order: [["week_count", "ASC"]] });
+        const weeks = await PregWeekDetailModel.findAll({ where: { lang_id }, attributes: ['id', 'week', 'week_count', 'start_para', 'recipe_name', 'recipe_image', 'ingredients', 'method'], order: [["week_count", "ASC"]] });
         if (!weeks || weeks.length === 0) return res.json({ status: false, message: "No data Found", data: [] });
         return res.json({ status: true, message: "Success", data: weeks });
     } catch (err) {
@@ -359,8 +359,8 @@ const getDietRecipe = async (req, res) => {
                     cooking_time: row.cook_time,
                     serving: row.serving,
                     image: row.image,
-                    ingredients: JSON.parse(row.ingredients || '[]'),
-                    directions: JSON.parse(row.directions || '[]')
+                    ingredients: typeof row.ingredients === 'string' ? JSON.parse(row.ingredients) : row.ingredients || [],
+                    directions: typeof row.directions === 'string' ? JSON.parse(row.directions) : row.directions || []
                 }));
 
                 responseData.Data.push({
