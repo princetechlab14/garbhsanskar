@@ -308,18 +308,26 @@ const viewsCount = async (req, res) => {
 
 const dietMonth = async (req, res) => {
     const schema = Joi.object({
-        lang_id: Joi.number().optional(),
+        lang_id: Joi.number().required(),
     });
-
     const { error, value } = schema.validate(req.body);
     if (error) return res.status(400).json({ status: false, message: error.details[0].message });
 
     const { lang_id } = value;
     try {
-        const diet = await DietModel.findAll({ where: { lang_id }, attributes: ['id', 'month'], group: ['month'], order: [['id', 'ASC']] });
-        return res.json({ status: true, message: "Success", data: diet });
+        const diet = await DietModel.findAll({
+            where: { lang_id },
+            attributes: [[sequelize.fn('MIN', sequelize.col('id')), 'id'], 'month'],
+            group: ['month'],
+            order: [[sequelize.fn('MIN', sequelize.col('id')), 'ASC']]
+        });
+
+        if (diet.length === 0) return res.json({ status: false, message: "No data Found", data: [] });
+        const result = diet.map(row => ({ id: parseInt(row.id), month: row.month }));
+        return res.json({ status: true, message: "Success", data: result });
     } catch (error) {
-        res.status(500).json({ status: false, message: "Internal Server Error", error: error.message });
+        console.error("Error fetching diet month:", error);
+        return res.status(500).json({ status: false, message: "Internal Server Error", error: error.message });
     }
 };
 
