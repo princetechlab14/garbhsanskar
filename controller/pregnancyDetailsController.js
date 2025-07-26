@@ -43,7 +43,6 @@ const store = async (req, res) => {
     try {
         const categories = await PregnancyModel.findAll({ where: { status: "Active" } });
         const languages = await LangModel.findAll({ where: { status: "Active" } });
-        console.log("req.body =>", req.body);
         const { error, value } = pregnancyDetailSchema.validate(req.body);
         if (error) return res.render("pregnancyDetail/create", { title: "Pregnancy Detail Create", error: error.details[0].message, categories, languages });
 

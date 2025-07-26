@@ -82,13 +82,16 @@ const getExercisesByTrimester = async (req, res) => {
 
     try {
         const exercises = await ExerciseModel.findAll({ where: { trimester_id, lang_id } });
-        if (exercises.length === 0) return res.status(404).json({ status: false, message: "No data Found", data: [] });
+        if (exercises.length === 0) {
+            return res.status(404).json({ status: false, message: "No data Found", data: [] });
+        }
 
         const baseUrl = "http://68.183.84.213/admin_garbhsanskar/excercise_images/";
 
         const data = await Promise.all(
             exercises.map(async (exercise) => {
-                return { ...exercise, image: baseUrl + exercise.image };
+                const plain = exercise.get({ plain: true });
+                return { ...plain, image: baseUrl + plain.image };
             })
         );
 
@@ -112,10 +115,20 @@ const getArticlesByCategory = async (req, res) => {
 
     try {
         const articles = await ArticleModel.findAll({ where: { category_id: article_id, lang_id } });
-        if (!articles || articles.length === 0) return res.status(404).json({ status: false, message: "No data Found", data: [] });
+        if (!articles || articles.length === 0) {
+            return res.status(404).json({ status: false, message: "No data Found", data: [] });
+        }
 
         const baseUrl = "http://68.183.84.213/admin_garbhsanskar/article_images/";
-        const result = articles.map(article => ({ ...article, image: baseUrl + article.image }));
+
+        const result = articles.map(article => {
+            const plain = article.get({ plain: true });
+            return {
+                ...plain,
+                image: baseUrl + plain.image
+            };
+        });
+
         res.json({ status: true, message: "Success", data: result });
     } catch (err) {
         console.error("Error fetching articles:", err);
@@ -191,20 +204,35 @@ const aboutPreCat = async (req, res) => {
     });
 
     const { error, value } = schema.validate(req.body);
-    if (error) return res.status(400).json({ status: false, message: error.details[0].message, data: [] });
+    if (error) {
+        return res.status(400).json({ status: false, message: error.details[0].message, data: [] });
+    }
 
     const { lang_id } = value;
     const baseImageUrl = "http://68.183.84.213/admin_garbhsanskar/about_pre_images/";
 
     try {
-        const records = await PregnancyModel.findAll({ where: { lang_id }, order: [["id", "ASC"]] });
-        if (!records || records.length === 0) return res.json({ status: false, message: "No data Found", data: [] });
+        const records = await PregnancyModel.findAll({
+            where: { lang_id },
+            order: [["id", "ASC"]]
+        });
 
-        const data = records.map(item => ({ ...item, image: baseImageUrl + item.image }));
+        if (!records || records.length === 0) {
+            return res.json({ status: false, message: "No data Found", data: [] });
+        }
+
+        const data = records.map(item => {
+            const plain = item.get({ plain: true });
+            return {
+                ...plain,
+                image: baseImageUrl + plain.image
+            };
+        });
+
         return res.json({ status: true, message: "Success", data });
     } catch (err) {
         console.error("Error fetching pregnancy info:", err);
-        res.status(500).json({ status: false, message: "Internal Server Error", data: [] });
+        return res.status(500).json({ status: false, message: "Internal Server Error", data: [] });
     }
 };
 
@@ -215,15 +243,31 @@ const aboutPreDetailsByCat = async (req, res) => {
     });
 
     const { error, value } = schema.validate(req.body);
-    if (error) return res.status(400).json({ status: false, message: error.details[0].message, data: [] });
+    if (error) {
+        return res.status(400).json({ status: false, message: error.details[0].message, data: [] });
+    }
 
     const { lang_id, cat_id } = value;
     const baseURL = `http://68.183.84.213/admin_garbhsanskar/about_pre_images/${cat_id}/`;
 
     try {
-        const records = await PregnancyDetailModel.findAll({ where: { lang_id, pregnancy_category_id: cat_id }, order: [["id", "ASC"]] });
-        if (!records || records.length === 0) return res.json({ status: false, message: "No data Found", data: [] });
-        const data = records.map(item => ({ ...item, image: baseURL + item.image }));
+        const records = await PregnancyDetailModel.findAll({
+            where: { lang_id, pregnancy_category_id: cat_id },
+            order: [["id", "ASC"]]
+        });
+
+        if (!records || records.length === 0) {
+            return res.json({ status: false, message: "No data Found", data: [] });
+        }
+
+        const data = records.map(item => {
+            const plain = item.get({ plain: true });
+            return {
+                ...plain,
+                image: baseURL + plain.image
+            };
+        });
+
         res.json({ status: true, message: "Success", data });
     } catch (err) {
         console.error("Error fetching pregnancy info:", err);
