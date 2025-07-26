@@ -1,7 +1,6 @@
 const moment = require("moment");
 const { WomenDetailsModel, PregWeekDetailModel, ExerciseModel, ArticleModel, MusicModel, MusicCategoryModel, PregnancyModel, PregnancyDetailModel, sequelize, VedicGeetModel, DietModel, AvoidFoodModel, WorkCategoryModel, CreativeWorkModel, CategoryModel, LangModel } = require("../models");
 const Joi = require("joi");
-const { where } = require("sequelize");
 
 // insert_details_of_women
 const insertDetailsOfWomen = async (req, res) => {
@@ -61,6 +60,7 @@ const pregnancyWeekDetails = async (req, res) => {
 
     try {
         const result = await PregWeekDetailModel.findOne({ where: { week_count, lang_id } });
+        result.description_sym = JSON.parse(result.description_sym);
         if (!result) return res.status(404).json({ status: false, message: "No data Found", data: {} });
         res.json({ status: true, message: "Success", data: result });
     } catch (err) {
@@ -258,25 +258,15 @@ const getVedicData = async (req, res) => {
             order = [['id', 'DESC']];
     }
     try {
-        const musics =
+        const vedicGeet =
             category === '1'
-                ? await MusicModel.findAll({ where, order: sequelize.literal('RAND()') })
-                : await MusicModel.findAll({ where, order });
+                ? await VedicGeetModel.findAll({ where, order: sequelize.literal('RAND()'), attributes: ['id', 'title', 'description', 'img_url', 'webview_link', 'views', 'shorting'] })
+                : await VedicGeetModel.findAll({ where, order, attributes: ['id', 'title', 'description', 'img_url', 'webview_link', 'views', 'shorting'] });
 
-        if (musics.length === 0) {
+        if (vedicGeet.length === 0) {
             return res.json({ status: false, message: 'No data Found', data: [] });
         }
-
-        const data = musics.map((item) => ({
-            id: item.id,
-            title: item.name,
-            description: item.desc,
-            img_url: item.image,
-            webview_link: item.music,
-            views: item.shorting ?? 0,
-        }));
-
-        return res.json({ status: true, message: 'Success', data });
+        return res.json({ status: true, message: 'Success', data: vedicGeet });
     } catch (err) {
         console.error(err);
         return res.status(500).json({ status: false, message: "Server Error", data: [] });
@@ -342,10 +332,10 @@ const getDietRecipe = async (req, res) => {
     const { month, lang_id } = value;
     try {
         const exists = await DietModel.findOne({ where: { month, lang_id } });
-        if (!exists) return res.json({ status: false, message: 'Data not found', Data: [], avoid_food: [] });
+        if (!exists) return res.json({ status: false, message: 'Data not found', data: [], avoid_food: [] });
 
         const mealTypes = ['Breakfast', 'Snack', 'Lunch', 'Dinner', 'Mid-Night'];
-        const responseData = { status: true, message: 'Success', Data: [], avoid_food: [] };
+        const responseData = { status: true, message: 'Success', data: [], avoid_food: [] };
 
         for (const type of mealTypes) {
             // One random image entry
@@ -371,7 +361,7 @@ const getDietRecipe = async (req, res) => {
                     directions: typeof row.directions === 'string' ? JSON.parse(row.directions) : row.directions || []
                 }));
 
-                responseData.Data.push({
+                responseData.data.push({
                     id: randomEntry.id,
                     name: randomEntry.name,
                     image: randomEntry.image,
@@ -379,7 +369,7 @@ const getDietRecipe = async (req, res) => {
                     details
                 });
             } else {
-                responseData.Data.push({
+                responseData.data.push({
                     title: type,
                     status: false
                 });
@@ -388,16 +378,10 @@ const getDietRecipe = async (req, res) => {
 
         const avoidFoods = await AvoidFoodModel.findAll({
             where: { month, lang_id },
-            order: [sequelize.literal('RAND()')]
+            order: [sequelize.literal('RAND()')],
+            attributes: ['id', 'title', 'short_desc', 'image', 'description'],
         });
-
-        responseData.avoid_food = avoidFoods.map(item => ({
-            id: item.id,
-            title: item.title,
-            short_description: item.short_description,
-            details: item.details,
-            image: item.image
-        }));
+        responseData.avoid_food = avoidFoods;
         res.json(responseData);
     } catch (error) {
         console.error('Error:', error);
@@ -438,12 +422,8 @@ const getCreativeWorkData = async (req, res) => {
     const { cat_id, lang_id } = value;
 
     try {
-        const creativeWorkData = await CreativeWorkModel.findAll({ where: { lang_id, cat_id } });
-        if (creativeWorkData.length > 0) {
-            res.json({ status: true, message: "Get all creative work data.", data: creativeWorkData });
-        } else {
-            res.status(404).json({ status: false, message: "No data found.", data: [] });
-        }
+        const creativeWorkData = await CreativeWorkModel.findOne({ where: { lang_id, id: cat_id } });
+        res.json({ status: true, message: "Get all creative work data.", data: creativeWorkData });
     } catch (err) {
         console.error('Error fetching creative work data:', err);
         res.status(500).json({ status: false, message: "Internal server error", data: [] });

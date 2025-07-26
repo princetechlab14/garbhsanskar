@@ -284,7 +284,7 @@ const pregnancyDetail = async () => {
                 const cleaned = str.replace(/\\(?!["\\/bfnrtu])/g, '\\\\').replace(/[\u0000-\u001F]+/g, '');
                 return JSON.parse(cleaned);
             } catch (err) {
-                // console.warn(`Invalid JSON:`, err.message);
+                console.warn(`PregnancyDetail Invalid JSON:`, err.message);
                 return fallback;
             }
         }
