@@ -60,7 +60,6 @@ const pregnancyWeekDetails = async (req, res) => {
 
     try {
         const result = await PregWeekDetailModel.findOne({ where: { week_count, lang_id } });
-        result.description_sym = JSON.parse(result.description_sym);
         if (!result) return res.status(404).json({ status: false, message: "No data Found", data: {} });
         res.json({ status: true, message: "Success", data: result });
     } catch (err) {
