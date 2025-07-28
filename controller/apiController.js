@@ -59,7 +59,7 @@ const pregnancyWeekDetails = async (req, res) => {
     const { week_count, lang_id } = value;
 
     try {
-        const result = await PregWeekDetailModel.findOne({ where: { week_count, lang_id } });
+        const result = await PregWeekDetailModel.findOne({ where: { week_count, lang_id, status: 'Active' } });
         if (!result) return res.status(404).json({ status: false, message: "No data Found", data: {} });
         res.json({ status: true, message: "Success", data: result });
     } catch (err) {
@@ -81,12 +81,12 @@ const getExercisesByTrimester = async (req, res) => {
     const { trimester_id, lang_id } = value;
 
     try {
-        const exercises = await ExerciseModel.findAll({ where: { trimester_id, lang_id } });
+        const exercises = await ExerciseModel.findAll({ where: { trimester_id, lang_id, status: 'Active' }, order: [['shorting', 'DESC']] });
         if (exercises.length === 0) {
             return res.status(404).json({ status: false, message: "No data Found", data: [] });
         }
 
-        const baseUrl = "http://68.183.84.213/admin_garbhsanskar/excercise_images/";
+        const baseUrl = `${req.protocol}://${req.get('host')}/excercise_images/`;
 
         const data = await Promise.all(
             exercises.map(async (exercise) => {
@@ -114,12 +114,12 @@ const getArticlesByCategory = async (req, res) => {
     const { article_id, lang_id } = value;
 
     try {
-        const articles = await ArticleModel.findAll({ where: { category_id: article_id, lang_id } });
+        const articles = await ArticleModel.findAll({ where: { category_id: article_id, lang_id, status: 'Active' }, order: [['shorting', 'DESC']] });
         if (!articles || articles.length === 0) {
             return res.status(404).json({ status: false, message: "No data Found", data: [] });
         }
 
-        const baseUrl = "http://68.183.84.213/admin_garbhsanskar/article_images/";
+        const baseUrl = `${req.protocol}://${req.get('host')}/article_images/`;
 
         const result = articles.map(article => {
             const plain = article.get({ plain: true });
@@ -137,16 +137,18 @@ const getArticlesByCategory = async (req, res) => {
 };
 
 const getMusicByCategories = async (req, res) => {
+    const base = `${req.protocol}://${req.get('host')}/music/`;
+
     const baseUrls = {
-        1: "http://68.183.84.213/admin_garbhsanskar/music/pregnancy/",
-        2: "http://68.183.84.213/admin_garbhsanskar/music/lullaby/",
-        3: "http://68.183.84.213/admin_garbhsanskar/music/children_songs/",
-        4: "http://68.183.84.213/admin_garbhsanskar/music/Garbh_Samwaad/",
-        5: "http://68.183.84.213/admin_garbhsanskar/music/Meditation_Instrumental/",
-        6: "http://68.183.84.213/admin_garbhsanskar/music/Prathana/",
-        7: "http://68.183.84.213/admin_garbhsanskar/music/Shree_Krishna_Bhajan/",
-        8: "http://68.183.84.213/admin_garbhsanskar/music/Strotra/",
-        9: "http://68.183.84.213/admin_garbhsanskar/music/Ved/"
+        1: base + "pregnancy/",
+        2: base + "lullaby/",
+        3: base + "children_songs/",
+        4: base + "Garbh_Samwaad/",
+        5: base + "Meditation_Instrumental/",
+        6: base + "Prathana/",
+        7: base + "Shree_Krishna_Bhajan/",
+        8: base + "Strotra/",
+        9: base + "Ved/"
     };
     const schema = Joi.object({
         lang_id: Joi.number().integer().default(1)
@@ -158,7 +160,7 @@ const getMusicByCategories = async (req, res) => {
     const { lang_id } = value;
 
     try {
-        const categories = await MusicCategoryModel.findAll({ where: { lang_id } });
+        const categories = await MusicCategoryModel.findAll({ where: { lang_id, status: 'Active' }, order: [['shorting', 'DESC']] });
         const data = [];
         for (const category of categories) {
             const categoryId = category.id;
@@ -167,7 +169,7 @@ const getMusicByCategories = async (req, res) => {
             const base_url_image = baseUrls[categoryId] ? baseUrls[categoryId] + "image/" : "";
             const base_url_music = baseUrls[categoryId] ? baseUrls[categoryId] + "music/" : "";
 
-            const musicItems = await MusicModel.findAll({ where: { music_category_id: categoryId } });
+            const musicItems = await MusicModel.findAll({ where: { music_category_id: categoryId, status: 'Active' }, order: [['shorting', 'DESC']] });
             const details = musicItems.map(item => ({ ...item, music: base_url_music + item.music, image: base_url_image + item.image }));
             data.push({ category_name: categoryName, details });
         }
@@ -189,7 +191,7 @@ const weekDiet = async (req, res) => {
     const { lang_id } = value;
 
     try {
-        const weeks = await PregWeekDetailModel.findAll({ where: { lang_id }, attributes: ['id', 'week', 'week_count', 'start_para', 'recipe_name', 'recipe_image', 'ingredients', 'method'], order: [["week_count", "ASC"]] });
+        const weeks = await PregWeekDetailModel.findAll({ where: { lang_id, status: 'Active' }, attributes: ['id', 'week', 'week_count', 'start_para', 'recipe_name', 'recipe_image', 'ingredients', 'method'], order: [["week_count", "ASC"]] });
         if (!weeks || weeks.length === 0) return res.json({ status: false, message: "No data Found", data: [] });
         return res.json({ status: true, message: "Success", data: weeks });
     } catch (err) {
@@ -209,11 +211,11 @@ const aboutPreCat = async (req, res) => {
     }
 
     const { lang_id } = value;
-    const baseImageUrl = "http://68.183.84.213/admin_garbhsanskar/about_pre_images/";
+    const baseImageUrl = `${req.protocol}://${req.get('host')}/about_pre_images/`;
 
     try {
         const records = await PregnancyModel.findAll({
-            where: { lang_id },
+            where: { lang_id, status: 'Active' },
             order: [["id", "ASC"]]
         });
 
@@ -248,11 +250,11 @@ const aboutPreDetailsByCat = async (req, res) => {
     }
 
     const { lang_id, cat_id } = value;
-    const baseURL = `http://68.183.84.213/admin_garbhsanskar/about_pre_images/${cat_id}/`;
+    const baseURL = `${req.protocol}://${req.get('host')}/about_pre_images/${cat_id}/`;
 
     try {
         const records = await PregnancyDetailModel.findAll({
-            where: { lang_id, pregnancy_category_id: cat_id },
+            where: { lang_id, pregnancy_category_id: cat_id, status: 'Active' },
             order: [["id", "ASC"]]
         });
 
@@ -349,7 +351,7 @@ const dietMonth = async (req, res) => {
     const { lang_id } = value;
     try {
         const diet = await DietModel.findAll({
-            where: { lang_id },
+            where: { lang_id, status: 'Active' },
             attributes: [[sequelize.fn('MIN', sequelize.col('id')), 'id'], 'month'],
             group: ['month'],
             order: [[sequelize.fn('MIN', sequelize.col('id')), 'ASC']]
@@ -389,7 +391,7 @@ const getDietRecipe = async (req, res) => {
 
             if (randomEntry) {
                 const allDetails = await DietModel.findAll({
-                    where: { month, type, lang_id }
+                    where: { month, type, lang_id, status: 'Active' }
                 });
 
                 const details = allDetails.map(row => ({
@@ -420,7 +422,7 @@ const getDietRecipe = async (req, res) => {
         }
 
         const avoidFoods = await AvoidFoodModel.findAll({
-            where: { month, lang_id },
+            where: { month, lang_id, status: 'Active' },
             order: [sequelize.literal('RAND()')],
             attributes: ['id', 'title', 'short_desc', 'image', 'description'],
         });
@@ -442,7 +444,7 @@ const getCreativeWorkCat = async (req, res) => {
     const { lang_id } = value;
 
     try {
-        const creativeWorkCat = await WorkCategoryModel.findAll({ where: lang_id ? { lang_id } : {} });
+        const creativeWorkCat = await WorkCategoryModel.findAll({ where: lang_id ? { lang_id, status: 'Active' } : { status: 'Active' } });
         if (creativeWorkCat.length > 0) {
             res.json({ status: true, message: "Get all creative work category.", data: creativeWorkCat });
         } else {
