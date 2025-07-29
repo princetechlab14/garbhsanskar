@@ -467,7 +467,7 @@ const getCreativeWorkData = async (req, res) => {
     const { cat_id, lang_id } = value;
 
     try {
-        const creativeWorkData = await CreativeWorkModel.findOne({ where: { lang_id, id: cat_id } });
+        const creativeWorkData = await CreativeWorkModel.findAll({ where: { lang_id, work_category_id: cat_id } });
         res.json({ status: true, message: "Get all creative work data.", data: creativeWorkData });
     } catch (err) {
         console.error('Error fetching creative work data:', err);
@@ -483,6 +483,7 @@ const getArticleData = async (req, res) => {
     const { error, value } = schema.validate(req.body);
     if (error) return res.status(400).json({ status: false, message: error.details[0].message, data: [] });
     const { lang_id } = value;
+    const baseUrl = `${req.protocol}://${req.get('host')}/article_images/`;
 
     try {
         const categoriesArticle = await CategoryModel.findAll({
@@ -492,7 +493,18 @@ const getArticleData = async (req, res) => {
                 { model: ArticleModel, as: "articles", attributes: ['id', 'category_id', 'lang_id', 'name', 'slug', 'image', 'short_desc', 'description'], where: { lang_id, status: 'Active' } },
             ]
         });
-        return res.json({ status: true, message: "Get all creative work data.", data: categoriesArticle });
+        const result = categoriesArticle.map(category => {
+            const plainCategory = category.get({ plain: true });
+            return {
+                ...plainCategory,
+                image: plainCategory.image ? baseUrl + plainCategory.image : null,
+                articles: plainCategory.articles.map(article => ({
+                    ...article,
+                    image: article.image ? baseUrl + article.image : null
+                }))
+            };
+        });
+        return res.json({ status: true, message: "Get all creative work data.", data: result });
     } catch (error) {
         console.error('Error fetching article data:', error);
         res.status(500).json({ status: false, message: "Internal server error", data: [] });
