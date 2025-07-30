@@ -396,6 +396,18 @@ const Music = async () => {
 
         ];
 
+        const baseUrls = {
+            1: "music/pregnancy",
+            2: "music/lullaby",
+            3: "music/children_songs",
+            4: "music/Garbh_Samwaad",
+            5: "music/Meditation_Instrumental",
+            6: "music/Prathana",
+            7: "music/Shree_Krishna_Bhajan",
+            8: "music/Strotra",
+            9: "music/Ved"
+        };
+
         // Step 3: Map to add slug and timestamps
         const insertRecords = rawRecords.map(record => {
             let rawName = record.name || '';
@@ -404,9 +416,11 @@ const Music = async () => {
             if (!slug || slug.trim() === '') {
                 slug = `no-valid-slug-${Date.now()}`;
             }
-
+            const basePath = baseUrls[((record.music_category_id - 1) % 9) + 1] || '';
             return {
                 ...record,
+                music: record.music ? `${basePath}/music/${record.music}` : '',
+                image: record.image ? `${basePath}/image/${record.image}` : '',
                 slug,
                 created_at: new Date(),
                 updated_at: new Date(),

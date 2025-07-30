@@ -94,6 +94,7 @@ const exercises = async () => {
 
             return {
                 ...record,
+                image:`excercise_images/${record.image}`,
                 slug,
                 shorting: 500,
                 status: 'Active',

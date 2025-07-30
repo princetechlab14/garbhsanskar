@@ -299,9 +299,10 @@ const pregnancyDetail = async () => {
             }
 
             const details = safeJSONParse(record.details, record.details);
-
+            const categoryIdCount = ((record.pregnancy_category_id - 1) % 6) + 1;
             return {
                 ...record,
+                image: `about_pre_images/${categoryIdCount}/${record.image}`,
                 slug,
                 details,
                 created_at: new Date(),

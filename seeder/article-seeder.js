@@ -173,7 +173,7 @@ const ArticleSeed = async () => {
             const namePrefix = rawName.substring(0, 10).toLowerCase();
             const parsedDescription = safeJSONParse(record.description, [], record.lang_id, record.category_id, namePrefix);
             const description = parseBigTitles(parsedDescription);
-            return { ...record, slug, description, short_desc: record.start_para, created_at: new Date(), updated_at: new Date(), deleted_at: null };
+            return { ...record, image: `article_images/${record.image}`, slug, description, short_desc: record.start_para, created_at: new Date(), updated_at: new Date(), deleted_at: null };
         });
 
         await ArticleModel.bulkCreate(insertRecords);

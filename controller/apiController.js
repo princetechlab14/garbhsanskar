@@ -86,7 +86,7 @@ const getExercisesByTrimester = async (req, res) => {
             return res.status(404).json({ status: false, message: "No data Found", data: [] });
         }
 
-        const baseUrl = `${req.protocol}://${req.get('host')}/excercise_images/`;
+        const baseUrl = `${req.protocol}://${req.get('host')}/`;
 
         const data = await Promise.all(
             exercises.map(async (exercise) => {
@@ -119,7 +119,7 @@ const getArticlesByCategory = async (req, res) => {
             return res.status(404).json({ status: false, message: "No data Found", data: [] });
         }
 
-        const baseUrl = `${req.protocol}://${req.get('host')}/article_images/`;
+        const baseUrl = `${req.protocol}://${req.get('host')}/`;
 
         const result = articles.map(article => {
             const plain = article.get({ plain: true });
@@ -137,19 +137,8 @@ const getArticlesByCategory = async (req, res) => {
 };
 
 const getMusicByCategories = async (req, res) => {
-    const base = `${req.protocol}://${req.get('host')}/music/`;
+    const baseUrl = `${req.protocol}://${req.get('host')}/`;
 
-    const baseUrls = {
-        1: base + "pregnancy/",
-        2: base + "lullaby/",
-        3: base + "children_songs/",
-        4: base + "Garbh_Samwaad/",
-        5: base + "Meditation_Instrumental/",
-        6: base + "Prathana/",
-        7: base + "Shree_Krishna_Bhajan/",
-        8: base + "Strotra/",
-        9: base + "Ved/"
-    };
     const schema = Joi.object({
         lang_id: Joi.number().integer().default(1)
     });
@@ -166,11 +155,15 @@ const getMusicByCategories = async (req, res) => {
             const categoryId = category.id;
             const categoryName = category.category;
 
-            const base_url_image = baseUrls[categoryId] ? baseUrls[categoryId] + "image/" : "";
-            const base_url_music = baseUrls[categoryId] ? baseUrls[categoryId] + "music/" : "";
-
             const musicItems = await MusicModel.findAll({ where: { music_category_id: categoryId, status: 'Active' }, order: [['shorting', 'DESC']] });
-            const details = musicItems.map(item => ({ ...item, music: base_url_music + item.music, image: base_url_image + item.image }));
+            const details = musicItems.map(item => {
+                const plainItem = item.get({ plain: true });
+                return {
+                    ...plainItem,
+                    music: plainItem.music ? baseUrl + plainItem.music : '',
+                    image: plainItem.image ? baseUrl + plainItem.image : ''
+                };
+            });
             data.push({ category_name: categoryName, details });
         }
         res.json({ status: true, message: "Success", data });
@@ -250,7 +243,7 @@ const aboutPreDetailsByCat = async (req, res) => {
     }
 
     const { lang_id, cat_id } = value;
-    const baseURL = `${req.protocol}://${req.get('host')}/about_pre_images/${cat_id}/`;
+    const baseURL = `${req.protocol}://${req.get('host')}/`;
 
     try {
         const records = await PregnancyDetailModel.findAll({
@@ -483,7 +476,7 @@ const getArticleData = async (req, res) => {
     const { error, value } = schema.validate(req.body);
     if (error) return res.status(400).json({ status: false, message: error.details[0].message, data: [] });
     const { lang_id } = value;
-    const baseUrl = `${req.protocol}://${req.get('host')}/article_images/`;
+    const baseUrl = `${req.protocol}://${req.get('host')}/`;
 
     try {
         const categoriesArticle = await CategoryModel.findAll({
